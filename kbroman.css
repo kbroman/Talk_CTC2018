@@ -5,7 +5,7 @@ h1, h2, h3 {
     font-family: 'Helvetica', 'Arial';
     font-weight: normal;
 }
-h1 {
+h1, h2 {
     color: rgb(0, 70, 180);
 }
 .remark-slide-content {
@@ -21,7 +21,7 @@ p {
     font-size: 32px;
 }
 a, a > code {
-    color: rgb(249, 38, 114);
+    color: rgb(106, 90, 205);
     text-decoration: none;
 }
 .footnote {
@@ -56,4 +56,11 @@ li li {
 }
 .title-slide .remark-slide-number {
     display: none;
+}
+.title-slide h3:nth-of-type(1) { /* author on title slide */
+}
+.title-slide h3:nth-of-type(2) { /* date on title slide */
+    font-size: 28px;
+    color: rgb(80,80,80);
+    line-height: 100%
 }

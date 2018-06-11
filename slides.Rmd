@@ -1,7 +1,7 @@
 ---
 title: "Cleaning genotype data for</br>diversity outbred mice"
 author: "[Karl Broman](https://kbroman.org)"
-date: 'Biostatistics & Medical Informatics, University of Wisconsin&ndash;Madison<br/><a href="https://kbroman.org"><code>kbroman.org</code></a><br/><a href="https://github.com/kbroman"><code>github.com/kbroman</code></a><br/><a href="https://twitter.com/kwbroman"><code>@kwbroman</code></a>'
+date: 'Biostatistics & Medical Informatics<br/>University of Wisconsin&ndash;Madison<br/><a href="https://kbroman.org"><code>kbroman.org</code></a><br/><a href="https://github.com/kbroman"><code>github.com/kbroman</code></a><br/><a href="https://twitter.com/kwbroman"><code>@kwbroman</code></a>'
 output:
     xaringan::moon_reader:
         lib_dir: libs
@@ -10,12 +10,13 @@ output:
             highlightLines: true
             countIncrementalSlides: false
             slideNumberFormat: '%current%'
-            ratio: "`r (ratio <- 16:9)`"
+            ratio: "16:9"
         css: [default, 'kbroman.css']
         chakra: libs/remark-latest.min.js
 ---
 
 ```{r setup, include=FALSE}
+ratio <- "16:9"
 fig_height <- ifelse(ratio=='4:3', 9, 7.5)
 curves_height <- ifelse(ratio=='4:3', 580, 540)
 curves_width <- ifelse(ratio=='4:3', 800, 1080)
@@ -25,3 +26,19 @@ knitr::opts_chunk$set(dev="svg", echo=FALSE,
                       fig.width=15)
 xaringan::summon_remark() # download latest version, locally
 ```
+
+## Principles
+
+What might have gone wrong?
+
+How could it be revealed?
+
+---
+
+## Summary
+
+- Quality of results depends on quality of data
+
+- Think about what might have gone wrong, and how it might be revealed
+
+- Consider the order in apply procedures
