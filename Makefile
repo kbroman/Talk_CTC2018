@@ -1,4 +1,4 @@
-all: slides.html
-
-%.html: %.Rmd kbroman.css
-	R -e "rmarkdown::render('$<')"
+slides.html: slides.Rmd kbroman.css
+	cp $^ doc/
+	cd doc;R -e "rmarkdown::render('$<')"
+	rm doc/$<
