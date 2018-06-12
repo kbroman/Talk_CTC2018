@@ -27,6 +27,15 @@ knitr::opts_chunk$set(dev="svg", echo=FALSE,
 xaringan::summon_remark() # download latest version, locally
 ```
 
+## Heterogeneous stock
+
+```{r dofig}
+source("R/hs_fig.R")
+```
+
+---
+
+
 ## Principles
 
 What might have gone wrong?
