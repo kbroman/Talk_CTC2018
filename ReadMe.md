@@ -6,6 +6,9 @@ June, 2018.
 
 Rendered slides: <https://kbroman.org/Talk_CTC2018>
 
+Note that the primary data files are not provided, and you won't be able to
+build the slides without them.
+
 ---
 
 To the extent possible under law,
