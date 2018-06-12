@@ -42,6 +42,91 @@ What might have gone wrong?
 
 How could it be revealed?
 
+
+
+---
+
+## Possible problems
+
+- Sample duplicates
+
+- Sample mix-ups
+
+- Bad samples
+
+- Bad markers
+
+- Genotyping errors in founders
+
+
+---
+
+## Sex swaps?
+
+```{r load_data}
+suppressMessages(library(fst))
+library(qtl2)
+x <- read.fst("../Data/attieDO_chrXint.fst")
+y <- read.fst("../Data/attieDO_chrYint.fst")
+do <- readRDS("../Data/attieDO_v0.rds")
+
+# for samples in replicate, figure out which one to keep
+tab <- table(do$covar$mouse)
+dup_mice <- names(tab[tab>1])
+dup_mice <- sprintf("DO%03d", as.numeric(sub("DO", "", dup_mice)))
+nm <- n_missing(do, summary="prop")
+nm_before <- nm[dup_mice]
+nm_after <- nm[paste0(dup_mice, "_b")]
+keep <- names(nm_before)[nm_before < nm_after]
+
+# samples to omit
+omit <- dup_mice
+omit[omit %in% keep] <- paste0(omit[omit %in% keep], "_b")
+
+x <- x[,is.na(match(names(x), omit))]
+y <- y[,is.na(match(names(y), omit))]
+ids <- ind_ids(do)
+do <- do[ids[!(ids %in% omit)],]
+```
+
+```{r yint_vs_xint_all_probes}
+par(mar=c(6.1,5.1,1.6,1.1), cex=1.7, cex.axis=1.3, cex.lab=1.3)
+xm <- colMeans(x[,-1], na.rm=TRUE)
+ym <- colMeans(y[,-1], na.rm=TRUE)
+library(broman)
+purple_green <- brocolors("web")[c("purple", "green")]
+grayplot(xm, ym, bg=purple_green[do$is_female + 1],
+         xlab="ave X chr intensity",
+         ylab="ave Y chr intensity")
+mtext(side=3, "All markers", adj=1, cex=1.8)
+```
+
+---
+
+## Sex swaps?
+
+```{r yint_vs_xint_selected_probes}
+file <- "R/_cache/xymarkers.RData"
+if(file.exists(file)) {
+    load(file)
+} else {
+    xp <- apply(x[,-1], 1, function(a) -log10(t.test(a ~ do$is_female)$p.value))
+    yp <- apply(y[,-1], 1, function(a) -log10(t.test(a ~ do$is_female)$p.value))
+    xmar <- x[xp > -log10(0.05/length(xp)),1]
+    ymar <- y[yp > -log10(0.05/length(yp)),1]
+    save(xmar, ymar, file=file)
+}
+par(mar=c(6.1,5.1,1.6,1.1), cex=1.7, cex.axis=1.3, cex.lab=1.3)
+xm <- colMeans(x[x[,1] %in% xmar, -1], na.rm=TRUE)
+ym <- colMeans(y[y[,1] %in% ymar, -1], na.rm=TRUE)
+library(broman)
+purple_green <- brocolors("web")[c("purple", "green")]
+grayplot(xm, ym, bg=purple_green[do$is_female + 1],
+         xlab="ave X chr intensity",
+         ylab="ave Y chr intensity")
+mtext(side=3, adj=1, cex=1.8, "Selected markers")
+```
+
 ---
 
 ## Summary
