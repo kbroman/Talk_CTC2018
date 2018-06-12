@@ -7,7 +7,7 @@ n.lines <- 80
 color <- qtl2::CCcolors
 library(simcross)
 
-par(bty="n", mar=rep(0.1, 4))
+par(bty="n", mar=rep(0.1, 4), cex=2)
 plot(0,0,xlim=c(0,864),ylim=c(25,480),xaxt="n",yaxt="n",xlab="",ylab="",type="n")
 
 u <- par("usr")
