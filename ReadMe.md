@@ -4,7 +4,7 @@ Slides for a talk at the [Complex Trait Community
 meeting](http://www.complextrait.org/ctc2018/) in Glasgow in
 June, 2018.
 
-Rendered slides: <https://kbroman.org/Talk_CTC2018/slides.html>
+Rendered slides: <https://kbroman.org/Talk_CTC2018>
 
 ---
 

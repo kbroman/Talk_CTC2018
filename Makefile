@@ -1,6 +1,7 @@
 R_OPTS=--no-save --no-restore --no-init-file --no-site-file # --vanilla, but without --no-environ
 
-slides.html: slides.Rmd kbroman.css
+docs/index.html: slides.Rmd kbroman.css
 	cp $^ docs/
-	cd docs;R $(R_OPTS) -e "rmarkdown::render('$<')"
-	rm docs/$<
+	mv docs/slides.Rmd docs/index.Rmd
+	cd docs;R $(R_OPTS) -e "rmarkdown::render('index.Rmd')"
+	rm docs/index.Rmd
