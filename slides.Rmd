@@ -366,7 +366,7 @@ segments(read_start, y, read_end, y, lwd=2, col="slateblue")
 - Proportion missing data
 
 - Genotype frequencies
-p
+
 - No. apparent genotyping errors
 
 
