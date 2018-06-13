@@ -268,11 +268,23 @@ arrows(textpos, 3000, textpos, 1000, length=0.15, col="violetred", lwd=2)
 
 ## Sample mix-ups
 
-(general illustration of the idea)
+```{r mixup_illustration_1}
+source("R/gve_mixup_scheme.R")
+gve_scheme(1)
+```
+
+---
+
+## Sample mix-ups
+
+```{r mixup_illustration_2}
+gve_scheme(2)
+```
 
 ---
 
 ## Sample mix-ups: RNA-seq phenotypes
+
 
 ---
 
