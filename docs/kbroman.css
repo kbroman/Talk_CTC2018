@@ -62,5 +62,8 @@ li li {
 .title-slide h3:nth-of-type(2) { /* date on title slide */
     font-size: 28px;
     color: rgb(80,80,80);
-    line-height: 100%
+    line-height: 115%;
+}
+.title-slide code {
+    line-height: 0%;
 }
