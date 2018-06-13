@@ -86,12 +86,12 @@ How could it be revealed?
 
 ---
 
-## Sex swaps
+## Missing data per sample
 
 ```{r load_data}
-x <- read.fst("../Data/attieDO_chrXint.fst")
-y <- read.fst("../Data/attieDO_chrYint.fst")
-do <- readRDS("../Data/attieDO_v0.rds")
+x <- read.fst("Data/attieDO_chrXint.fst")
+y <- read.fst("Data/attieDO_chrYint.fst")
+do <- readRDS("Data/attieDO_v0.rds")
 
 # for samples in replicate, figure out which one to keep
 tab <- table(do$covar$mouse)
@@ -111,6 +111,24 @@ y <- y[,is.na(match(names(y), omit))]
 ids <- ind_ids(do)
 do <- do[ids[!(ids %in% omit)],]
 ```
+
+```{r plot_missing}
+prop_missing <- sort(n_missing(do, "ind", "prop"))*100
+par(mar=c(5.1, 4.1, 1.1, 1.1), cex=1.5, cex.axis=1.3, cex.lab=1.3)
+grayplot(prop_missing, ylab="Percent missing genotypes",
+         xlim=c(0, 502), xaxs="i", mgp.x=c(1.9,0.3,0),
+         ylim=c(0, 70), yaxs="i")
+index <- seq_along(prop_missing)
+wh <- which(prop_missing > 10)
+lab <- sub("_b$", "", names(prop_missing))
+adj <- c(-0.5, +0.5, -1, +1, 0, 0, 0)
+text(index[wh]-3, prop_missing[wh]+adj, lab[wh], adj=c(1, 0.5))
+```
+
+---
+
+## Sex swaps
+
 
 ```{r yint_vs_xint_all_probes}
 par(mar=c(6.1,5.1,1.6,1.1), cex=1.7, cex.axis=1.3, cex.lab=1.3)

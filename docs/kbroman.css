@@ -64,6 +64,6 @@ li li {
     color: rgb(80,80,80);
     line-height: 115%;
 }
-.title-slide code {
+.title-slide code { /* code inside date on title slide */
     line-height: 0%;
 }
