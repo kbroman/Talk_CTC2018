@@ -67,3 +67,6 @@ li li {
 .title-slide code { /* code inside date on title slide */
     line-height: 0%;
 }
+.big-table {
+    font-size: 40px;
+}
