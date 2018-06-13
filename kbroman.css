@@ -67,6 +67,13 @@ li li {
 .title-slide code { /* code inside date on title slide */
     line-height: 0%;
 }
-.big-table {
-    font-size: 40px;
+/* the following for kable tables (total kludge) */
+.table-striped td {
+    padding: 20px;
+}
+.table-striped>tbody>tr:nth-of-type(even) {
+    background-color: #fff;
+}
+.table-striped>tbody>tr>td:nth-of-type(1) {
+    background-color: #eee;
 }

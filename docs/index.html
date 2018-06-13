@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="author" content="Karl Broman" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <script src="libs/kePrint/kePrint.js"></script>
     <link rel="stylesheet" href="kbroman.css" type="text/css" />
   </head>
   <body>
@@ -154,6 +155,12 @@ How could it be revealed?
 
 ---
 
+## RNA-seq sample mix-ups
+
+![](index_files/figure-html/rnaseq_problems_detail-1.svg)&lt;!-- --&gt;
+
+---
+
 ## Microbiome data
 
 
@@ -162,6 +169,108 @@ How could it be revealed?
 ---
 
 ## Sample mix-ups: Microbiome data
+
+
+- Impute genotypes at all SNPs in DNA samples
+
+- Map microbiome reads to mouse genome; find reads overlapping a SNP
+
+- For each pair of samples (DNA + microbiome):
+
+  - Focus on reads that overlap a SNP where that DNA sample is
+    homozygous
+
+  - Distance = proportion of reads where SNP allele doesn't match DNA
+    sample's genotype
+
+
+---
+
+## Microbiome DO361 vs DNA DO361
+
+&lt;table class="table table-striped" style="font-size: 48px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; AA &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; BB &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; A &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 939,918 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1,044 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; B &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2,998 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 125,962 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+
+
+
+---
+
+## Microbiome DO360 vs DNA DO360
+
+&lt;table class="table table-striped" style="font-size: 48px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; AA &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; BB &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; A &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2,661,645 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 190,188 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; B &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 427,685 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 202,335 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+## Microbiome DO360 vs DNA DO370
+
+&lt;table class="table table-striped" style="font-size: 48px; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; AA &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; BB &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; A &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3,137,751 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1,475 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; B &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7,461 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 310,369 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+## Microbiome mix-ups
+
+![](index_files/figure-html/microbiome_best_vs_self-1.svg)&lt;!-- --&gt;
+
 
 
 ---

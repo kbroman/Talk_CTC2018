@@ -33,7 +33,8 @@ library(jpeg)
 suppressMessages(library(igraph))
 iArrows <- igraph:::igraph.Arrows
 library(lineup2)
-library(xtable)
+library(knitr)
+library(kableExtra)
 ```
 
 ## Heterogeneous stock
@@ -433,13 +434,13 @@ segments(read_start, y, read_end, y, lwd=2, col="slateblue")
 
 ```{r do361_do361, results="asis"}
 microbiome <- readRDS("Data/microbiome_mixups_dist.rds")
-tab <- table("DNA DO361"=c("AA", "BB"), "Microbiome DO361"=c("A", "B"))
+tab <- table("Microbiome DO361"=c("A", "B"), "DNA DO361"=c("AA", "BB"))
 tab[1,1] <- microbiome$k1["DO361", "DO361"]
-tab[1,2] <- (microbiome$n1 - microbiome$k1)["DO361", "DO361"]
-tab[2,1] <- (microbiome$n3 - microbiome$k3)["DO361", "DO361"]
+tab[2,1] <- (microbiome$n1 - microbiome$k1)["DO361", "DO361"]
+tab[1,2] <- (microbiome$n3 - microbiome$k3)["DO361", "DO361"]
 tab[2,2] <- microbiome$k3["DO361", "DO361"]
-print(xtable(add_commas(tab), align=rep("r", 3), digits=0), type="html",
-      html.table.attributes='border=0, class="big-table"')
+kable_styling(kable(add_commas(tab), align="rrr"),
+              font_size=48, bootstrap_options="striped")
 ```
 
 
@@ -450,13 +451,13 @@ print(xtable(add_commas(tab), align=rep("r", 3), digits=0), type="html",
 ## Microbiome DO360 vs DNA DO360
 
 ```{r do360_do360, results="asis"}
-tab <- table("DNA DO360"=c("AA", "BB"), "Microbiome DO360"=c("A", "B"))
+tab <- table("Microbiome DO360"=c("A", "B"), "DNA DO360"=c("AA", "BB"))
 tab[1,1] <- microbiome$k1["DO360", "DO360"]
-tab[1,2] <- (microbiome$n1 - microbiome$k1)["DO360", "DO360"]
-tab[2,1] <- (microbiome$n3 - microbiome$k3)["DO360", "DO360"]
+tab[2,1] <- (microbiome$n1 - microbiome$k1)["DO360", "DO360"]
+tab[1,2] <- (microbiome$n3 - microbiome$k3)["DO360", "DO360"]
 tab[2,2] <- microbiome$k3["DO360", "DO360"]
-print(xtable(add_commas(tab), align=rep("r", 3), digits=0), type="html",
-      html.table.attributes='border=0, class="big-table"')
+kable_styling(kable(add_commas(tab), align="rrr"),
+              font_size=48, bootstrap_options="striped")
 ```
 
 ---
@@ -464,14 +465,42 @@ print(xtable(add_commas(tab), align=rep("r", 3), digits=0), type="html",
 ## Microbiome DO360 vs DNA DO370
 
 ```{r do370_do360, results="asis"}
-tab <- table("DNA DO370"=c("AA", "BB"), "Microbiome DO360"=c("A", "B"))
+tab <- table("Microbiome DO360"=c("A", "B"), "DNA DO370"=c("AA", "BB"))
 tab[1,1] <- microbiome$k1["DO370", "DO360"]
-tab[1,2] <- (microbiome$n1 - microbiome$k1)["DO370", "DO360"]
-tab[2,1] <- (microbiome$n3 - microbiome$k3)["DO370", "DO360"]
+tab[2,1] <- (microbiome$n1 - microbiome$k1)["DO370", "DO360"]
+tab[1,2] <- (microbiome$n3 - microbiome$k3)["DO370", "DO360"]
 tab[2,2] <- microbiome$k3["DO370", "DO360"]
-print(xtable(add_commas(tab), align=rep("r", 3), digits=0), type="html",
-      html.table.attributes='border=0, class="big-table"')
+kable_styling(kable(add_commas(tab), align="rrr"),
+              font_size=48, bootstrap_options="striped")
 ```
+
+---
+
+## Microbiome mix-ups
+
+```{r microbiome_best_vs_self}
+microbiome_best_vs_self <-
+    function(labels=0)
+{
+    par(mar=c(6.6,12.1,1.1, 12.1), cex=1.3, cex.axis=1.2, cex.lab=1.2)
+    grayplot(microbiome$self, microbiome$best, xlab="distance to self", ylab="minimum distance")
+    if(labels==1) { # mix-ups
+
+    }
+    if(labels==2) { # bad samples
+
+    }
+    if(labels==3) { # duplicates
+
+    }
+    if(labels==3) { # mixtures
+
+    }
+}
+microbiome_best_vs_self(0)
+```
+
+
 
 ---
 
