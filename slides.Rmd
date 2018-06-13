@@ -148,8 +148,6 @@ legend("topright", pch=21, pt.bg=purple_green, c("male", "female"), bg="gray90")
 ## Sex swaps
 
 ```{r yint_vs_xint_selected_probes}
-yint_vs_xint_selected <-
-function(labels=FALSE) {
 file <- "R/_cache/xymarkers.RData"
 if(file.exists(file)) {
     load(file)
@@ -160,10 +158,13 @@ if(file.exists(file)) {
     ymar <- y[yp > -log10(0.05/length(yp)),1]
     save(xmar, ymar, file=file)
 }
-par(mar=c(6.1,5.1,1.6,1.1), cex=1.7, cex.axis=1.3, cex.lab=1.3)
 xm <- colMeans(x[x[,1] %in% xmar, -1], na.rm=TRUE)
 ym <- colMeans(y[y[,1] %in% ymar, -1], na.rm=TRUE)
 prop_missing <- n_missing(do, "ind", "prop")
+
+yint_vs_xint_selected <-
+function(labels=FALSE) {
+par(mar=c(6.1,5.1,1.6,1.1), cex=1.7, cex.axis=1.3, cex.lab=1.3)
 grayplot(xm, ym, bg=purple_green[do$is_female + 1],
          xlab="ave X chr intensity",
          ylab="ave Y chr intensity")
@@ -197,9 +198,10 @@ yint_vs_xint_selected(TRUE)
 ## Sex swaps
 
 ```{r het_vs_xint}
+prop_het <- rowSums(do$geno$X == 2)/rowSums(do$geno$X != 0)
+
 het_vs_xint <- function(labels=FALSE) {
 par(mar=c(6.1,5.1,1.6,1.1), cex=1.7, cex.axis=1.3, cex.lab=1.3)
-prop_het <- rowSums(do$geno$X == 2)/rowSums(do$geno$X != 0)
 grayplot(xm, prop_het, bg=purple_green[do$is_female + 1],
          ylab="proportion het on X",
          xlab="average X chr intensity")
