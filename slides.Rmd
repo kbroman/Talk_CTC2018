@@ -148,6 +148,8 @@ legend("topright", pch=21, pt.bg=purple_green, c("male", "female"), bg="gray90")
 ## Sex swaps
 
 ```{r yint_vs_xint_selected_probes}
+yint_vs_xint_selected <-
+function(labels=FALSE) {
 file <- "R/_cache/xymarkers.RData"
 if(file.exists(file)) {
     load(file)
@@ -166,6 +168,8 @@ grayplot(xm, ym, bg=purple_green[do$is_female + 1],
          xlab="ave X chr intensity",
          ylab="ave Y chr intensity")
 mtext(side=3, adj=1, cex=1.8, "Selected markers")
+legend("topright", pch=21, pt.bg=purple_green, c("male", "female"), bg="gray90")
+if(!labels) return()
 to_label <- c(names(sort(xm)[1:2]), # really low X intensity
               names(xm)[xm < 0.4 & ym < 0.1], # low X and Y
               names(xm)[do$is_female & ym > 0.2]) # female but high Y intensity
@@ -175,7 +179,16 @@ xadj <- c(0.5, 0.5, 1, 0, 0.5, 0.5)
 for(i in seq_along(to_label))
     text(xm[to_label[i]], ym[to_label[i]]+yadd[i], label[i],
          adj=c(xadj[i], 0.5))
-legend("topright", pch=21, pt.bg=purple_green, c("male", "female"), bg="gray90")
+}
+yint_vs_xint_selected(FALSE)
+```
+
+---
+
+## Sex swaps
+
+```{r yint_vs_xint_selected_probes_labeled}
+yint_vs_xint_selected(TRUE)
 ```
 
 
@@ -184,6 +197,7 @@ legend("topright", pch=21, pt.bg=purple_green, c("male", "female"), bg="gray90")
 ## Sex swaps
 
 ```{r het_vs_xint}
+het_vs_xint <- function(labels=FALSE) {
 par(mar=c(6.1,5.1,1.6,1.1), cex=1.7, cex.axis=1.3, cex.lab=1.3)
 prop_het <- rowSums(do$geno$X == 2)/rowSums(do$geno$X != 0)
 grayplot(xm, prop_het, bg=purple_green[do$is_female + 1],
@@ -192,6 +206,7 @@ grayplot(xm, prop_het, bg=purple_green[do$is_female + 1],
 on_top <- (do$is_female & xm < 0.4)
 points(xm[on_top], prop_het[on_top], pch=21, bg=purple_green[2])
 legend("topright", pch=21, pt.bg=purple_green, c("male", "female"), bg="gray90")
+if(!labels) return()
 to_label <- c(names(xm)[xm < 0.4 & prop_het > 0.2],
               names(xm)[do$is_female & xm > 0.35 & xm < 0.4])
 xadd <- 0.003*c(1,1,1,1,-2.7)
@@ -201,6 +216,17 @@ label <- sub("_b$", "", to_label)
 for(i in seq_along(to_label))
     text(xm[to_label[i]]+xadd[i], prop_het[to_label[i]]+yadd[i], label[i],
          adj=c(xadj[i], 0.5))
+}
+het_vs_xint(FALSE)
+```
+
+
+---
+
+## Sex swaps
+
+```{r het_vs_xint_labeled}
+het_vs_xint(TRUE)
 ```
 
 ---
