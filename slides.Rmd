@@ -32,6 +32,7 @@ library(broman)
 library(jpeg)
 suppressMessages(library(igraph))
 iArrows <- igraph:::igraph.Arrows
+library(lineup2)
 ```
 
 ## Heterogeneous stock
@@ -254,7 +255,55 @@ gve_scheme(2)
 
 ---
 
-## Sample mix-ups: RNA-seq phenotypes
+## RNA-seq sample mix-ups: distance matrix
+
+```{r gve_dist_image, dev="png", dpi=600}
+load("Data/rnaseq_mixups_results.RData")
+par(mar=c(6.6,12.1,1.1, 12.1), cex=1.3, cex.axis=1.2, cex.lab=1.2)
+image(1:ncol(d), 1:nrow(d), t(d),
+      col=gray((0:256)/256), las=1,
+      xlab="DNA sample", ylab="RNA sample")
+```
+
+---
+
+## RNA-seq sample mix-ups: minimum vs self distance
+
+```{r gve_best_vs_self_unlabeled}
+gve_best_vs_self <-
+    function(labels=FALSE)
+{
+    selfd <- get_self(d)
+    bestd <- get_best(d)
+    par(mar=c(6.6,12.1,1.1, 12.1), cex=1.3, cex.axis=1.2, cex.lab=1.2)
+    grayplot(selfd, bestd, xlab="distance to self", ylab="minimum distance")
+    if(!labels) return()
+
+    wh <- which(selfd > 0.8)
+    xadd <- yadd <- setNames(rep(0, length(wh)), names(wh))
+    yadd["DO340"] <- +0.02
+    yadd["DO397"] <- -0.02
+    yadd["DO306"] <- -0.025
+    xadd["DO306"] <- +0.05
+    yadd["DO268"] <- +0.02
+    yadd["DO310"] <- -0.025
+    xadd["DO310"] <- +0.05
+    yadd["DO360"] <- -0.01
+    yadd["DO370"] <- +0.005
+    for(i in seq_along(wh)) {
+        text(selfd[wh[i]]-0.008+xadd[i], bestd[wh[i]]+yadd[i], names(wh)[i], adj=c(1, 0.5))
+    }
+}
+gve_best_vs_self(FALSE)
+```
+
+---
+
+## RNA-seq sample mix-ups: minimum vs self distance
+
+```{r gve_best_vs_self_labeled}
+gve_best_vs_self(TRUE)
+```
 
 
 ---

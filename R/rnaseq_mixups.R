@@ -36,7 +36,7 @@ if(file.exists(file)) {
     apr <- readRDS(file)
 } else {
     for(i in c(1:19,"X")) {
-        cat("Chr ", i, "\n")
+        cat("chr", i, "\n")
         pr <- calc_genoprob(do[,i], gmap[i], error_prob=0.002, map_function="c-f", cores=0)
         saveRDS(pr, file=paste0("Data/Genoprobs/attieDO_v1_pr_", i, ".rds"))
         this_apr <- genoprob_to_alleleprob(pr)
@@ -64,7 +64,34 @@ file <- "Data/rnaseq_peaks.rds"
 if(file.exists(file)) {
     peaks <- readRDS(file)
 } else {
-    out <- scan1(apr, expr.mrna, cores=0)
-    peaks <- find_peaks(apr, gmap, threshold=25)
+    batches <- batch_cols(expr.mrna, 50)
+    peaks <- vector("list", length(batches))
+    for(i in seq_along(batches)) {
+        cat("batch", i, "\n")
+        out <- scan1(apr, expr.mrna[,batches[[i]]$cols], cores=0)
+        peaks[[i]] <- find_peaks(out, gmap, threshold=25)
+        saveRDS(peaks, file)
+    }
     saveRDS(peaks, file)
+}
+
+file <- "Data/rnaseq_mixups_results.RData"
+if(file.exists(file)) {
+    load(file)
+} else {
+    peaks <- do.call("rbind", peaks)
+    peaks <- peaks[peaks$lod > 100,]
+    expr_obs <- expr.mrna[,peaks$lodcolumn]
+    library(parallel)
+    expr_exp <- mclapply(1:nrow(peaks), function(i) {
+        p <- pull_genoprobpos(apr, find_marker(gmap, peaks$chr[i], peaks$pos[i]))
+        out <- fit1(p, expr_obs[,i])
+        p %*% out$coef }, mc.cores=detectCores())
+    expr_exp <- matrix(unlist(expr_exp), ncol=ncol(expr_obs))
+    dimnames(expr_exp) <- list(rownames(apr[[1]]), colnames(expr_obs))
+
+    d <- lineup2::dist_betw_matrices(expr_obs, expr_exp)
+    d <- d[order(as.numeric(sub("DO", "", rownames(d)))), order(as.numeric(sub("DO", "", colnames(d))))]
+
+    save(expr_obs, expr_exp, d, file=file)
 }
