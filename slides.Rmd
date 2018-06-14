@@ -70,6 +70,14 @@ What might have gone wrong?
 
 How could it be revealed?
 
+--
+
+Then make a bunch of graphs
+
+--
+
+If you see something weird, try to figure it out
+
 
 
 ---
