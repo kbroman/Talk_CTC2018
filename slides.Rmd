@@ -28,6 +28,7 @@ knitr::opts_chunk$set(dev="svg", echo=FALSE, results="hide",
 xaringan::summon_remark() # download latest version, locally
 suppressMessages(library(fst))
 library(qtl2)
+library(qtl2fst)
 library(broman)
 library(jpeg)
 suppressMessages(library(igraph))
@@ -126,6 +127,16 @@ x <- x[,is.na(match(names(x), omit))]
 y <- y[,is.na(match(names(y), omit))]
 ids <- ind_ids(do)
 do <- do[ids[!(ids %in% omit)],]
+
+# clean up the names
+names(x) <- sub("_b$", "", names(x))
+names(y) <- sub("_b$", "", names(y))
+for(i in seq_along(do$geno)) {
+    rownames(do$geno[[i]]) <- sub("_b$", "", rownames(do$geno[[i]]))
+}
+rownames(do$covar) <- sub("_b$", "", rownames(do$covar))
+rownames(do$cross_info) <- sub("_b$", "", rownames(do$cross_info))
+names(do$is_female) <- sub("_b$", "", names(do$is_female))
 ```
 
 ```{r plot_missing}
@@ -582,11 +593,13 @@ class: inverse, middle, center
 
 - Proportion missing data
 
+- SNP array intensities
+
 - Genotype frequencies
 
 - No. crossovers
 
-- No. apparent genotyping errors
+- No. genotyping errors
 
 ---
 
@@ -600,22 +613,196 @@ class: inverse, middle, center
 
 ---
 
-# Genotype frequencies
+# Genotype frequencies, by individual
+
+```{r genotype_freq}
+# pull out genotype data
+g <- do.call("cbind", do$geno[1:19])
+fg <- do.call("cbind", do$founder_geno[1:19])
+
+# omit markers with any missing founder genotypes
+g <- g[,colSums(fg==0)==0]
+fg <- fg[,colSums(fg==0)==0]
+
+# 0 -> NA
+g[g==0] <- NA
+
+# recode so 1 = major allele
+af_fg <- colSums(fg==1)
+fg[,af_fg > 4] <- 4-fg[,af_fg > 4]
+g[,af_fg > 4] <- 4-g[,af_fg > 4]
+af_fg <- colSums(fg==1)
+
+# genotype frequencies by marker class
+af_g <- matrix(ncol=4, nrow=nrow(g))
+dimnames(af_g) <- list(rownames(g), 1:4)
+for(i in 1:4) {
+    af_g[,i] <- rowMeans((g[,af_fg==i] - 1)/2, na.rm=TRUE)
+}
+
+prop_missing <- n_missing(do, "ind", "prop")*100
+
+plot_geno_freq_byind <- function(subset=FALSE, density=FALSE)
+{
+    these_af <- af_g
+    if(subset) {
+        these_af <- af_g[prop_missing < 10, ]
+    }
+
+    par(mfrow=c(2,2), mar=c(5.1, 1.1, 2.1, 1.1), cex=1.5)
+    for(i in 1:4) {
+        if(subset) breaks <- seq(i/8-0.05, i/8+0.05, len=45) else breaks <- 80
+
+        yli <- range(hist(1-these_af[,i], breaks=breaks, plot=FALSE)$density)
+
+        if(density) {
+            u <-par("usr")[1:2]
+            u <- seq(min(breaks), max(breaks), len=251)
+            dn <- dnorm(u, i/8, sqrt(i/8*(1-i/8) / sum(af_fg==i)))
+            yli <- range(c(yli, dn))
+        }
+
+        hist(1-these_af[,i], breaks=breaks, ylim=yli,
+             main=paste0("MAF = ", i, "/8"),
+             yaxt="n", ylab="", xlab="Frequency of minor allele", prob=TRUE)
+        arrows(i/8, par("usr")[3], i/8, 0, len=0.1, lwd=3, col="violetred")
+
+        if(density) lines(u, dn, lwd=2, col="slateblue")
+    }
+}
+plot_geno_freq_byind(FALSE)
+```
+
+---
+
+# Genotype frequencies, by individual
+
+```{r genotype_freq_subset}
+plot_geno_freq_byind(TRUE)
+```
+
+---
+
+# Genotype frequencies, by individual
+
+```{r genotype_freq_subset_wdensity}
+plot_geno_freq_byind(TRUE, TRUE)
+```
 
 ---
 
 # Genotype probabilities (one mouse on one chr)
 
-
+```{r plot_genoprob, dev="png", dpi=600}
+pr_fst <- readRDS("Data/GenoprobsFST/attieDO_v1_pr_fst.rds")
+gmap <- readRDS("Data/attieDO_gmap.rds")
+pmap <- readRDS("Data/attieDO_pmap.rds")
+par(mar=c(5.1,5.1,2.1,0.1), cex=1.8, cex.axis=0.9, cex.lab=1.3, cex.main=1.3)
+plot_genoprob(pr_fst, gmap, ind="DO361", chr=3, threshold=0.25,
+              xlab="Chr 3 position (cM)", main="DO361", ylab="Genotype")
+```
 
 ---
 
 # Genome reconstruction (one mouse)
 
+```{r plot_onegeno}
+file <- "R/_cache/infg_nxo.RData"
+if(file.exists(file)) {
+    load(file)
+} else {
+    infg <- maxmarg(pr_fst, minprob=0.5, cores=0)
+    infg_ph <<- guess_phase(do, infg, cores=0)
+    n_xo <- count_xo(infg, cores=0)
+    save(infg, infg_ph, n_xo, file=file)
+}
+par(mar=c(5.1,5.1,2.1,0.1), cex=1.8, cex.axis=1.1, cex.lab=1.3, cex.main=1.3)
+plot_onegeno(infg_ph, gmap, ind="DO361", ylab="Position (cM)", main="DO361")
+```
+
 ---
 
 # Percent missing vs number of crossovers
 
+```{r missing_v_nxo}
+missing_v_nxo_fig <- function(label=FALSE, subset=FALSE)
+{
+    par(mar=c(5.1,5.1,1.1,1.1), cex=1.8, cex.axis=1.3, cex.lab=1.3, cex.main=1.3)
+    prop_missing <- n_missing(do, "ind", "prop")*100
+    tot_xo <- rowSums(n_xo)
+    if(subset) {
+        tot_xo <- tot_xo[prop_missing < 10]
+        prop_missing <- prop_missing[prop_missing < 10]
+    }
+    grayplot(tot_xo, prop_missing, xlab="Number of crossovers", ylab="Percent missing data")
+    if(!label) return()
+    if(!subset) {
+        to_lab <- names(prop_missing)[prop_missing >= 10]
+    } else {
+        to_lab <- names(tot_xo)[tot_xo == min(tot_xo) | tot_xo == max(tot_xo) | prop_missing > 5.9]
+    }
+    xadj <- setNames(rep(ifelse(subset, 5, 50), length(to_lab)), to_lab)
+    yadj <- setNames(rep(0, length(to_lab)), to_lab)
+    if(!subset) {
+        xadj["DO340"] <- xadj["DO340"] * -1
+        xadj["DO397"] <- xadj["DO397"] * -1
+    } else {
+        xadj["DO029"] <- 0; yadj["DO029"] <- 0.4
+        xadj["DO524"] <- 0; yadj["DO524"] <- 0.4
+    }
+    for(i in seq_along(to_lab)) {
+        text(tot_xo[to_lab[i]]+xadj[i], prop_missing[to_lab[i]]+yadj[i], to_lab[i],
+             adj=c(ifelse(xadj[i] < 0, 1, ifelse(yadj[i] > 0, 0.5, 0)), 0.5))
+    }
+}
+missing_v_nxo_fig(FALSE, FALSE)
+```
+
+
+
+---
+
+# Percent missing vs number of crossovers
+
+```{r missing_v_nxo_labeled}
+missing_v_nxo_fig(TRUE, FALSE)
+```
+
+---
+
+# Percent missing vs number of crossovers
+
+```{r missing_v_nxo_subset}
+missing_v_nxo_fig(FALSE, TRUE)
+```
+
+---
+
+# Percent missing vs number of crossovers
+
+```{r missing_v_nxo_subset_labeled}
+missing_v_nxo_fig(TRUE, TRUE)
+```
+
+---
+
+# No. crossovers by generation
+
+```{r nxo_by_wave}
+tot_xo <- rowSums(n_xo)
+tot_xo <- tot_xo[tot_xo < 1000]
+wave <- as.numeric(do$covar[names(tot_xo), "wave"])
+mousenum <- as.numeric(sub("DO", "", names(tot_xo)))
+o <- order(mousenum)
+color <- qtl2::CCcolors[c(8,2,4,6,7)]
+par(mar=c(5.1,5.1,2.1,1.1), cex=1.8, cex.axis=1.3, cex.lab=1.3, cex.main=1.3)
+grayplot(seq_along(o), tot_xo[o], bg=color[wave[o]],
+         xlab="Mouse number", ylab="No. crossovers", xaxs="i",
+         xlim=c(-1.5,500.5))
+gen <- tapply(do$covar$gen, do$covar$wave, "[", 1)
+text(seq(50, 450, by=100), rep(617, 5), paste("gen", gen),
+     xpd=TRUE, col=color)
+```
 
 ---
 
