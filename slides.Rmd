@@ -96,6 +96,12 @@ If you see something weird, try to figure it out
 
 
 ---
+class: middle, center
+
+## What to look at first?
+
+
+---
 
 ## Missing data per sample
 
