@@ -425,7 +425,8 @@ for(ind in paste0("DO", c(268, 269, 309, 310, 360, 370))) {
              xlab="", xaxs="i", xlim=c(-4.5, nrow(d)+0.5),
              ylab="distance", main=ind, ylim=range(d),
              xat=c(100, 200, 300), vlines=c(100, 200, 300))
-    text(which.min(this_d)-5, min(this_d), names(which.min(this_d)), adj=c(1, 0.5))
+    text(which.min(this_d)-10, min(this_d), names(which.min(this_d)),
+         adj=c(1, 0.5), cex=1.2)
 }
 ```
 
