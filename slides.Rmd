@@ -47,9 +47,6 @@ source("R/hs_fig.R")
 
 # Diversity outbred mouse data
 
-- Collaboration with Alan Attie, Gary Churchill, Brian Yandell,
-  Josh Coon, Federico Rey, and many others
-
 - 500 DO mice
 
 - GigaMUGA SNP arrays (114k SNPs)
@@ -60,6 +57,8 @@ source("R/hs_fig.R")
 
 - protein and lipid measurements by mass spec
 
+- Collaboration with Alan Attie, Gary Churchill, Brian Yandell,
+  Josh Coon, Federico Rey, and many others
 
 ---
 
@@ -134,11 +133,12 @@ prop_missing <- sort(n_missing(do, "ind", "prop"))*100
 plot_missing_byind <- function(label=FALSE)
 {
     par(mar=c(5.1, 4.1, 1.1, 1.1), cex=1.5, cex.axis=1.3, cex.lab=1.3)
-    grayplot(prop_missing, ylab="Percent missing genotypes",
+    index <- seq_along(prop_missing)
+    grayplot(index, prop_missing,
+             xlab="Mice (sorted)", ylab="Percent missing genotypes",
              xlim=c(0, 502), xaxs="i", mgp.x=c(1.9,0.3,0),
              ylim=c(0, 70), yaxs="i")
     if(!label) return()
-    index <- seq_along(prop_missing)
     wh <- which(prop_missing > 10)
     lab <- sub("_b$", "", names(prop_missing))
     adj <- c(-0.5, +0.5, -1, +1, 0, 0, 0)
@@ -163,7 +163,7 @@ class: inverse, middle, center
 
 ---
 
-# Sex swaps
+# Average SNP intensity on X and Y chr
 
 
 ```{r yint_vs_xint_all_probes}
@@ -174,13 +174,13 @@ purple_green <- brocolors("web")[c("purple", "green")]
 grayplot(xm, ym, bg=purple_green[do$is_female + 1],
          xlab="ave X chr intensity",
          ylab="ave Y chr intensity")
-mtext(side=3, "All markers", adj=1, cex=1.8)
+mtext(side=3, "All markers", adj=0, cex=1.8)
 legend("topright", pch=21, pt.bg=purple_green, c("male", "female"), bg="gray90")
 ```
 
 ---
 
-# Sex swaps
+# Average SNP intensity on X and Y chr
 
 ```{r yint_vs_xint_selected_probes}
 file <- "R/_cache/xymarkers.RData"
@@ -203,7 +203,7 @@ par(mar=c(6.1,5.1,1.6,1.1), cex=1.7, cex.axis=1.3, cex.lab=1.3)
 grayplot(xm, ym, bg=purple_green[do$is_female + 1],
          xlab="ave X chr intensity",
          ylab="ave Y chr intensity")
-mtext(side=3, adj=1, cex=1.8, "Selected markers")
+mtext(side=3, adj=0, cex=1.8, "Selected markers")
 legend("topright", pch=21, pt.bg=purple_green, c("male", "female"), bg="gray90")
 if(!labels) return()
 to_label <- c(names(sort(xm)[1:2]), # really low X intensity
@@ -221,7 +221,7 @@ yint_vs_xint_selected(FALSE)
 
 ---
 
-# Sex swaps
+# Average SNP intensity on X and Y chr
 
 ```{r yint_vs_xint_selected_probes_labeled}
 yint_vs_xint_selected(TRUE)
@@ -230,7 +230,7 @@ yint_vs_xint_selected(TRUE)
 
 ---
 
-# Sex swaps
+# Heterozygosity vs SNP intensity on X chr
 
 ```{r het_vs_xint}
 prop_het <- rowSums(do$geno$X == 2)/rowSums(do$geno$X != 0)
@@ -260,7 +260,7 @@ het_vs_xint(FALSE)
 
 ---
 
-# Sex swaps
+# Heterozygosity vs SNP intensity on X chr
 
 ```{r het_vs_xint_labeled}
 het_vs_xint(TRUE)
@@ -273,7 +273,7 @@ class: inverse, middle, center
 
 ---
 
-# Sample duplicates
+# Proportion matching genotypes between pairs
 
 ```{r prop_match, dev="png", dpi=600}
 file <- "R/_cache/compare_geno.rds"
@@ -292,7 +292,7 @@ rug(cg_upper, col="violetred")
 
 ---
 
-# Sample duplicates
+# Proportion matching genotypes between pairs
 
 ```{r prop_match_labeled, dev="png", dpi=600}
 par(mar=c(6.1, 1.1, 1.1, 1.1), cex=1.7, cex.lab=1.3, cex.axis=1.3)
@@ -519,7 +519,7 @@ kable_styling(kable(add_commas(tab), align="rrr"),
 
 ---
 
-# Microbiome mix-ups
+# Microbiome mix-ups: minimum vs self distance
 
 ```{r microbiome_best_vs_self}
 microbiome_best_vs_self <- function(label=FALSE)
@@ -560,7 +560,7 @@ microbiome_best_vs_self(FALSE)
 
 ---
 
-# Microbiome mix-ups
+# Microbiome mix-ups: minimum vs self distance
 
 ```{r microbiome_best_vs_self_labeled}
 microbiome_best_vs_self(TRUE)
@@ -630,7 +630,7 @@ Gary Churchill<br/>
 Dan Gatti<br/>
 Alexandra Lobo<br/>
 Federico Rey<br/>
-Saunak Sen<br/>
+&#346;aunak Sen<br/>
 Lindsay Traeger<br/>
 Brian Yandell
 

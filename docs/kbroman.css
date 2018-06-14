@@ -65,6 +65,9 @@ li li {
     line-height: 115%;
 }
 /* the following for kable tables (total kludge) */
+.table-striped {
+    margin-top: 80px;
+}
 .table-striped td {
     padding: 20px;
 }
