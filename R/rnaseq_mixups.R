@@ -31,6 +31,10 @@ if(file.exists(file)) {
 }
 
 gmap <- insert_pseudomarkers(do$gmap, step=0.2, stepwidth="max")
+saveRDS(gmap, "Data/attieDO_gmap.rds")
+pmap <- interp_map(gmap, do$gmap, do$pmap)
+saveRDS(pmap, "Data/attieDO_pmap.rds")
+
 file <- "Data/attieDO_v1_apr.rds"
 if(file.exists(file)) {
     apr <- readRDS(file)
