@@ -37,7 +37,7 @@ library(knitr)
 library(kableExtra)
 ```
 
-## Heterogeneous stock
+# Heterogeneous stock
 
 ```{r dofig}
 source("R/hs_fig.R")
@@ -45,7 +45,7 @@ source("R/hs_fig.R")
 
 ---
 
-## Diversity outbred mouse data
+# Diversity outbred mouse data
 
 - Collaboration with Alan Attie, Gary Churchill, Brian Yandell,
   Josh Coon, Federico Rey, and many others
@@ -64,7 +64,7 @@ source("R/hs_fig.R")
 ---
 
 
-## Principles
+# Principles
 
 What might have gone wrong?
 
@@ -82,7 +82,7 @@ If you see something weird, try to figure it out
 
 ---
 
-## Possible problems
+# Possible problems
 
 - Sample duplicates
 
@@ -98,12 +98,12 @@ If you see something weird, try to figure it out
 ---
 class: middle, center
 
-## What to look at first?
+# What to look at first?
 
 
 ---
 
-## Missing data per sample
+# Missing data per sample
 
 ```{r load_data}
 x <- read.fst("Data/attieDO_chrXint.fst")
@@ -144,7 +144,7 @@ text(index[wh]-3, prop_missing[wh]+adj, lab[wh], adj=c(1, 0.5))
 
 ---
 
-## Sex swaps
+# Sex swaps
 
 
 ```{r yint_vs_xint_all_probes}
@@ -161,7 +161,7 @@ legend("topright", pch=21, pt.bg=purple_green, c("male", "female"), bg="gray90")
 
 ---
 
-## Sex swaps
+# Sex swaps
 
 ```{r yint_vs_xint_selected_probes}
 file <- "R/_cache/xymarkers.RData"
@@ -202,7 +202,7 @@ yint_vs_xint_selected(FALSE)
 
 ---
 
-## Sex swaps
+# Sex swaps
 
 ```{r yint_vs_xint_selected_probes_labeled}
 yint_vs_xint_selected(TRUE)
@@ -211,7 +211,7 @@ yint_vs_xint_selected(TRUE)
 
 ---
 
-## Sex swaps
+# Sex swaps
 
 ```{r het_vs_xint}
 prop_het <- rowSums(do$geno$X == 2)/rowSums(do$geno$X != 0)
@@ -241,7 +241,7 @@ het_vs_xint(FALSE)
 
 ---
 
-## Sex swaps
+# Sex swaps
 
 ```{r het_vs_xint_labeled}
 het_vs_xint(TRUE)
@@ -249,7 +249,7 @@ het_vs_xint(TRUE)
 
 ---
 
-## Sample duplicates
+# Sample duplicates
 
 ```{r prop_match}
 file <- "R/_cache/compare_geno.rds"
@@ -268,7 +268,7 @@ rug(cg_upper, col="violetred")
 
 ---
 
-## Sample duplicates
+# Sample duplicates
 
 ```{r prop_match_labeled}
 par(mar=c(6.1, 1.1, 1.1, 1.1), cex=1.7, cex.lab=1.3, cex.axis=1.3)
@@ -282,7 +282,7 @@ arrows(textpos, 3000, textpos, 1000, length=0.15, col="violetred", lwd=2)
 
 ---
 
-## Sample mix-ups
+# Sample mix-ups
 
 ```{r mixup_illustration_1}
 source("R/gve_mixup_scheme.R")
@@ -291,7 +291,7 @@ gve_scheme(1)
 
 ---
 
-## Sample mix-ups
+# Sample mix-ups
 
 ```{r mixup_illustration_2}
 gve_scheme(2)
@@ -299,7 +299,7 @@ gve_scheme(2)
 
 ---
 
-## RNA-seq sample mix-ups: distance matrix
+# RNA-seq sample mix-ups: distance matrix
 
 ```{r gve_dist_image, dev="png", dpi=600}
 load("Data/rnaseq_mixups_results.RData")
@@ -311,7 +311,7 @@ image(1:ncol(d), 1:nrow(d), t(d),
 
 ---
 
-## RNA-seq sample mix-ups: minimum vs self distance
+# RNA-seq sample mix-ups: minimum vs self distance
 
 ```{r gve_best_vs_self_unlabeled}
 gve_best_vs_self <-
@@ -343,7 +343,7 @@ gve_best_vs_self(FALSE)
 
 ---
 
-## RNA-seq sample mix-ups: minimum vs self distance
+# RNA-seq sample mix-ups: minimum vs self distance
 
 ```{r gve_best_vs_self_labeled}
 gve_best_vs_self(TRUE)
@@ -352,7 +352,7 @@ gve_best_vs_self(TRUE)
 
 ---
 
-## RNA-seq sample mix-ups
+# RNA-seq sample mix-ups
 
 ```{r rnaseq_problems_detail}
 label_sep <- 10
@@ -370,7 +370,7 @@ for(ind in paste0("DO", c(268, 269, 309, 310, 360, 370))) {
 
 ---
 
-## Microbiome data
+# Microbiome data
 
 
 ```{r microbiome_illustration}
@@ -426,7 +426,7 @@ segments(read_start, y, read_end, y, lwd=2, col="slateblue")
 
 ---
 
-## Sample mix-ups: Microbiome data
+# Sample mix-ups: Microbiome data
 
 
 - Impute genotypes at all SNPs in DNA samples
@@ -444,7 +444,7 @@ segments(read_start, y, read_end, y, lwd=2, col="slateblue")
 
 ---
 
-## Microbiome DO361 vs DNA DO361
+# Microbiome DO361 vs DNA DO361
 
 ```{r do361_do361, results="asis"}
 microbiome <- readRDS("Data/microbiome_mixups_dist.rds")
@@ -462,7 +462,7 @@ kable_styling(kable(add_commas(tab), align="rrr"),
 
 ---
 
-## Microbiome DO360 vs DNA DO360
+# Microbiome DO360 vs DNA DO360
 
 ```{r do360_do360, results="asis"}
 tab <- table("Microbiome DO360"=c("A", "B"), "DNA DO360"=c("AA", "BB"))
@@ -476,7 +476,7 @@ kable_styling(kable(add_commas(tab), align="rrr"),
 
 ---
 
-## Microbiome DO360 vs DNA DO370
+# Microbiome DO360 vs DNA DO370
 
 ```{r do370_do360, results="asis"}
 tab <- table("Microbiome DO360"=c("A", "B"), "DNA DO370"=c("AA", "BB"))
@@ -490,7 +490,7 @@ kable_styling(kable(add_commas(tab), align="rrr"),
 
 ---
 
-## Microbiome mix-ups
+# Microbiome mix-ups
 
 ```{r microbiome_best_vs_self}
 microbiome_best_vs_self <- function(label=FALSE)
@@ -531,7 +531,7 @@ microbiome_best_vs_self(FALSE)
 
 ---
 
-## Microbiome mix-ups
+# Microbiome mix-ups
 
 ```{r microbiome_best_vs_self_labeled}
 microbiome_best_vs_self(TRUE)
@@ -540,7 +540,7 @@ microbiome_best_vs_self(TRUE)
 
 ---
 
-## Sample quality
+# Sample quality
 
 - Proportion missing data
 
@@ -552,7 +552,7 @@ microbiome_best_vs_self(TRUE)
 
 ---
 
-## Marker quality
+# Marker quality
 
 - Proportion missing data
 
@@ -563,13 +563,13 @@ microbiome_best_vs_self(TRUE)
 
 ---
 
-## Founder genotyping errors
+# Founder genotyping errors
 
 
 
 ---
 
-## Summary
+# Summary
 
 - Quality of results depends on quality of data
 
