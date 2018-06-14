@@ -237,11 +237,13 @@ if(!labels) return()
 to_label <- c(names(sort(xm)[1:2]), # really low X intensity
               names(xm)[xm < 0.4 & ym < 0.1], # low X and Y
               names(xm)[do$is_female & ym > 0.2]) # female but high Y intensity
-yadd <- 0.02*c(1,1,1,1,-1.7,1)
-xadj <- c(0.5, 0.5, 1, 0, 0.5, 0.5)
-for(i in seq_along(to_label))
-    text(xm[to_label[i]], ym[to_label[i]]+yadd[i], to_label[i],
-         adj=c(xadj[i], 0.5))
+yadd <- setNames(rep(0.02, length(to_label)), to_label)
+yadd["DO357"] <- yadd["DO357"] * -1.7
+xadj <- setNames(rep(0.5, length(to_label)), to_label)
+xadj["DO153"] <- 1
+xadj["DO347"] <- 0
+for(i in to_label)
+    text(xm[i], ym[i]+yadd[i], i, adj=c(xadj[i], 0.5))
 }
 yint_vs_xint_selected(FALSE)
 ```
