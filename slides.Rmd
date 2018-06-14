@@ -131,16 +131,30 @@ do <- do[ids[!(ids %in% omit)],]
 
 ```{r plot_missing}
 prop_missing <- sort(n_missing(do, "ind", "prop"))*100
-par(mar=c(5.1, 4.1, 1.1, 1.1), cex=1.5, cex.axis=1.3, cex.lab=1.3)
-grayplot(prop_missing, ylab="Percent missing genotypes",
-         xlim=c(0, 502), xaxs="i", mgp.x=c(1.9,0.3,0),
-         ylim=c(0, 70), yaxs="i")
-index <- seq_along(prop_missing)
-wh <- which(prop_missing > 10)
-lab <- sub("_b$", "", names(prop_missing))
-adj <- c(-0.5, +0.5, -1, +1, 0, 0, 0)
-text(index[wh]-3, prop_missing[wh]+adj, lab[wh], adj=c(1, 0.5))
+plot_missing_byind <- function(label=FALSE)
+{
+    par(mar=c(5.1, 4.1, 1.1, 1.1), cex=1.5, cex.axis=1.3, cex.lab=1.3)
+    grayplot(prop_missing, ylab="Percent missing genotypes",
+             xlim=c(0, 502), xaxs="i", mgp.x=c(1.9,0.3,0),
+             ylim=c(0, 70), yaxs="i")
+    if(!label) return()
+    index <- seq_along(prop_missing)
+    wh <- which(prop_missing > 10)
+    lab <- sub("_b$", "", names(prop_missing))
+    adj <- c(-0.5, +0.5, -1, +1, 0, 0, 0)
+    text(index[wh]-3, prop_missing[wh]+adj, lab[wh], adj=c(1, 0.5))
+}
+plot_missing_byind(FALSE)
 ```
+
+---
+
+# Missing data per sample
+
+```{r missing_genotypes_labeled}
+plot_missing_byind(TRUE)
+```
+
 
 ---
 class: inverse, middle, center
