@@ -1,7 +1,7 @@
 ---
 title: "Cleaning genotype data for</br>diversity outbred mice"
 author: "[Karl Broman](https://kbroman.org)"
-date: 'Biostatistics & Medical Informatics<br/>University of Wisconsin&ndash;Madison<br/><a href="https://kbroman.org"><code>kbroman.org</code></a><br/><a href="https://github.com/kbroman"><code>github.com/kbroman</code></a><br/><a href="https://twitter.com/kwbroman"><code>@kwbroman</code></a>'
+date: 'Biostatistics & Medical Informatics<br/>University of Wisconsin&ndash;Madison<br/><br/><a href="https://kbroman.org"><code>kbroman.org</code></a><br/><a href="https://github.com/kbroman"><code>github.com/kbroman</code></a><br/><a href="https://twitter.com/kwbroman"><code>@kwbroman</code></a><br/>Slides: <a href="https://bit.ly/2018ctc"><code>bit.ly/2018ctc</code></a>'
 output:
     xaringan::moon_reader:
         lib_dir: libs
@@ -72,11 +72,11 @@ How could it be revealed?
 
 --
 
-Then make a bunch of graphs
+Also just make a bunch of graphs.
 
 --
 
-If you see something weird, try to figure it out
+If you see something weird, try to figure it out.
 
 
 
@@ -96,7 +96,7 @@ If you see something weird, try to figure it out
 
 
 ---
-class: middle, center
+class: inverse, middle, center
 
 # What to look at first?
 
@@ -141,6 +141,11 @@ lab <- sub("_b$", "", names(prop_missing))
 adj <- c(-0.5, +0.5, -1, +1, 0, 0, 0)
 text(index[wh]-3, prop_missing[wh]+adj, lab[wh], adj=c(1, 0.5))
 ```
+
+---
+class: inverse, middle, center
+
+# Swapped sex labels
 
 ---
 
@@ -248,6 +253,11 @@ het_vs_xint(TRUE)
 ```
 
 ---
+class: inverse, middle, center
+
+# Sample duplicates
+
+---
 
 # Sample duplicates
 
@@ -279,6 +289,11 @@ textpos <- median(cg_upper[cg_upper < 0.35])
 text(textpos, 4000, "DO306 / DO308", col="darkslateblue")
 arrows(textpos, 3000, textpos, 1000, length=0.15, col="violetred", lwd=2)
 ```
+
+---
+class: inverse, middle, center
+
+# Sample mix-ups
 
 ---
 
@@ -539,6 +554,11 @@ microbiome_best_vs_self(TRUE)
 
 
 ---
+class: inverse, middle, center
+
+# Sample quality
+
+---
 
 # Sample quality
 
@@ -551,6 +571,11 @@ microbiome_best_vs_self(TRUE)
 - No. apparent genotyping errors
 
 ---
+class: inverse, middle, center
+
+# Marker quality
+
+---
 
 # Marker quality
 
@@ -560,6 +585,11 @@ microbiome_best_vs_self(TRUE)
 
 - No. apparent genotyping errors
 
+
+---
+class: inverse, middle, center
+
+# Founder genotyping errors
 
 ---
 
@@ -576,3 +606,16 @@ microbiome_best_vs_self(TRUE)
 - Think about what might have gone wrong, and how it might be revealed
 
 - Consider the order in apply procedures
+
+---
+class: middle, center
+
+# &nbsp;
+
+Slides: [`bit.ly/2018ctc`](https://bit.ly/2018ctc)
+
+[`kbroman.org`](https://kbroman.org)
+
+[`github.com/kbroman`](https://github.com/kbroman)
+
+[`@kwbroman`](https://twitter.com/kwbroman)
