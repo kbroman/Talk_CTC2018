@@ -808,6 +808,64 @@ text(seq(50, 450, by=100), rep(617, 5), paste("gen", gen),
 
 # Estimated percent of genotyping errors
 
+```{r genotype_errors}
+file <- "R/_cache/n_err.RData"
+if(file.exists(file)) {
+    load(file)
+} else {
+    errlod_file <- "R/_cache/errlod.rds"
+    if(file.exists(errlod_file)) {
+        errlod <- readRDS(errlod_file)
+    } else {
+        errlod <- calc_errorlod(do, pr_fst, cores=0)
+        saveRDS(errlod, errlod_file)
+    }
+    errlod <- do.call("cbind", errlod)
+    nerr_byind <- rowSums(errlod > 4)
+    nerr_bymar <- colSums(errlod > 4)
+    save(nerr_byind, nerr_bymar, file=file)
+}
+plot_geno_err_byind <- function(subset=FALSE)
+{
+    par(mar=c(5.1,5.1,1.1,1.1), cex=1.5, cex.lab=1.3, cex.axis=1.3)
+    yval <- nerr_byind/n_typed(do)*100
+    if(subset) {
+        prop_missing <- n_missing(do, "ind", "prop")*100
+        yval <- yval[names(prop_missing)[prop_missing < 10]]
+    }
+    mousenum <- as.numeric(sub("DO", "", names(yval)))
+    yval <- yval[order(mousenum)]
+    xval <- setNames(seq_along(yval), names(yval))
+
+    if(!subset) ylim <- c(0, 6.2)
+    else ylim <- c(0, 0.27)
+
+    grayplot(xval, yval,
+             xlab="Mouse", ylab="Percent genotyping errors",
+             xlim=c(-2.5, 502.5), xaxs="i", yaxs="i", ylim=ylim,
+             mgp.y=c(3.1,0.3,0))
+
+    # labels
+    to_lab <- names(yval)[yval > ifelse(subset, 0.15, 0.25)]
+    xadj <- setNames(rep(1, length(to_lab)), to_lab)
+    if(subset) {
+        xadj["DO135"] <- -1
+    }
+    for(i in to_lab) text(xval[i]+3*xadj[i], yval[i], i, adj=c(ifelse(xadj[i]<0,1,0), 0.5))
+}
+plot_geno_err_byind(FALSE)
+```
+
+---
+
+# Estimated percent of genotyping errors
+
+```{r genotype_errors_subset}
+plot_geno_err_byind(TRUE)
+```
+
+
+
 ---
 class: inverse, middle, center
 
