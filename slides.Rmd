@@ -52,7 +52,7 @@ source("R/hs_fig.R")
 
 - 500 DO mice
 
-- GigaMUGA SNP arrays
+- GigaMUGA SNP arrays (114k SNPs)
 
 - RNA-seq data on pancreatic islets
 
@@ -620,6 +620,21 @@ class: inverse, middle, center
 - Think about what might have gone wrong, and how it might be revealed
 
 - Consider the order in apply procedures
+
+---
+
+# Acknowledgments
+
+Alan Attie<br/>
+Gary Churchill<br/>
+Dan Gatti<br/>
+Alexandra Lobo<br/>
+Federico Rey<br/>
+Saunak Sen<br/>
+Lindsay Traeger<br/>
+Brian Yandell
+
+
 
 ---
 class: middle, center
