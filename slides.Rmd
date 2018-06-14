@@ -698,11 +698,12 @@ Brian Yandell
 
 
 ---
-class: middle, center
+class: middle, indent
 
 # &nbsp;
 
 Slides: [`bit.ly/2018ctc`](https://bit.ly/2018ctc)
+.cc0-button[ [![CC0](CC0_button.svg)](https://creativecommons.org/publicdomain/zero/1.0) ]
 
 [`kbroman.org`](https://kbroman.org)
 
