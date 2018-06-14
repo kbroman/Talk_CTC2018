@@ -71,7 +71,7 @@ How could it be revealed?
 
 --
 
-Also just make a bunch of graphs.
+Also, just make a bunch of graphs.
 
 --
 
@@ -605,6 +605,8 @@ class: inverse, middle, center
 ---
 
 # Genotype probabilities (one mouse on one chr)
+
+
 
 ---
 
