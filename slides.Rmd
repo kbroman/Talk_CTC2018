@@ -137,6 +137,11 @@ for(i in seq_along(do$geno)) {
 rownames(do$covar) <- sub("_b$", "", rownames(do$covar))
 rownames(do$cross_info) <- sub("_b$", "", rownames(do$cross_info))
 names(do$is_female) <- sub("_b$", "", names(do$is_female))
+
+# reorder by mouse number
+x <- x[, c(1,1+order(as.numeric(sub("DO", "", names(x)[-1]))))]
+y <- y[, c(1,1+order(as.numeric(sub("DO", "", names(y)[-1]))))]
+do <- do[order(as.numeric(sub("DO", "", ind_ids(do)))),]
 ```
 
 ```{r plot_missing}
@@ -232,11 +237,10 @@ if(!labels) return()
 to_label <- c(names(sort(xm)[1:2]), # really low X intensity
               names(xm)[xm < 0.4 & ym < 0.1], # low X and Y
               names(xm)[do$is_female & ym > 0.2]) # female but high Y intensity
-label <- sub("_b$", "", to_label)
 yadd <- 0.02*c(1,1,1,1,-1.7,1)
 xadj <- c(0.5, 0.5, 1, 0, 0.5, 0.5)
 for(i in seq_along(to_label))
-    text(xm[to_label[i]], ym[to_label[i]]+yadd[i], label[i],
+    text(xm[to_label[i]], ym[to_label[i]]+yadd[i], to_label[i],
          adj=c(xadj[i], 0.5))
 }
 yint_vs_xint_selected(FALSE)
@@ -272,9 +276,8 @@ to_label <- c(names(xm)[xm < 0.4 & prop_het > 0.2],
 xadd <- 0.003*c(1,1,1,1,-2.7)
 yadd <- 0.035*c(0,0,0,0,1)
 xadj <- c(0,0,0,0,0.5)
-label <- sub("_b$", "", to_label)
 for(i in seq_along(to_label))
-    text(xm[to_label[i]]+xadd[i], prop_het[to_label[i]]+yadd[i], label[i],
+    text(xm[to_label[i]]+xadd[i], prop_het[to_label[i]]+yadd[i], to_label[i],
          adj=c(xadj[i], 0.5))
 }
 het_vs_xint(FALSE)

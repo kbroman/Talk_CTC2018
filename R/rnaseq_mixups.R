@@ -27,6 +27,11 @@ if(file.exists(file)) {
     rownames(do$cross_info) <- sub("_b$", "", rownames(do$cross_info))
     names(do$is_female) <- sub("_b$", "", names(do$is_female))
     stopifnot(check_cross2(do))
+
+    # reorder by mouse number
+    donum <- as.numeric(sub("DO", "", ind_ids(do)))
+    do <- do[order(donum),]
+
     saveRDS(do, file)
 }
 
@@ -42,7 +47,7 @@ if(file.exists(file)) {
     for(i in c(1:19,"X")) {
         cat("chr", i, "\n")
         pr <- calc_genoprob(do[,i], gmap[i], error_prob=0.002, map_function="c-f", cores=0)
-        saveRDS(pr, file=paste0("Data/Genoprobs/attieDO_v1_pr_", i, ".rds"))
+        saveRDS(pr, file=paste0("Data/Genoprobs/attieDO_v1_pr_", i, ".rds"), compress=FALSE)
         this_apr <- genoprob_to_alleleprob(pr)
         if(i==1) {
             apr <- this_apr
@@ -50,7 +55,7 @@ if(file.exists(file)) {
             apr <- cbind(apr, this_apr)
         }
     }
-    saveRDS(apr, file)
+    saveRDS(apr, file, compress=FALSE)
 }
 
 # grab expression data
