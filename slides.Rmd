@@ -140,20 +140,32 @@ names(do$is_female) <- sub("_b$", "", names(do$is_female))
 ```
 
 ```{r plot_missing}
-prop_missing <- sort(n_missing(do, "ind", "prop"))*100
+prop_missing <- n_missing(do, "ind", "prop")*100
 plot_missing_byind <- function(label=FALSE)
 {
+    mousenum <- as.numeric(sub("DO", "", names(prop_missing)))
+    prop_missing <- prop_missing[order(mousenum)]
+
     par(mar=c(5.1, 4.1, 1.1, 1.1), cex=1.5, cex.axis=1.3, cex.lab=1.3)
-    index <- seq_along(prop_missing)
-    grayplot(index, prop_missing,
-             xlab="Mice (sorted)", ylab="Percent missing genotypes",
+    index <- setNames(seq_along(prop_missing), names(prop_missing))
+    color <- qtl2::CCcolors[c(8,2,4,6,7)]
+    wave <- as.numeric(do$covar[names(prop_missing),"wave"])
+
+    grayplot(index, prop_missing, bg=color[wave],
+             xlab="Mouse", ylab="Percent missing genotypes",
              xlim=c(0, 502), xaxs="i", mgp.x=c(1.9,0.3,0),
              ylim=c(0, 70), yaxs="i")
+
     if(!label) return()
-    wh <- which(prop_missing > 10)
-    lab <- sub("_b$", "", names(prop_missing))
-    adj <- c(-0.5, +0.5, -1, +1, 0, 0, 0)
-    text(index[wh]-3, prop_missing[wh]+adj, lab[wh], adj=c(1, 0.5))
+
+    to_label <- names(prop_missing)[prop_missing > 10]
+    xadj <- setNames(rep(+1, length(to_label)), to_label)
+    xadj["DO357"] <- xadj["DO397"] <- -1
+
+    for(i in to_label) {
+        text(index[i]-3*xadj[i], prop_missing[i], i,
+             adj=c(ifelse(xadj[i] > 0, 1, 0), 0.5))
+    }
 }
 plot_missing_byind(FALSE)
 ```
