@@ -108,6 +108,7 @@ class: inverse, middle, center
 ```{r load_data}
 x <- read.fst("Data/attieDO_chrXint.fst")
 y <- read.fst("Data/attieDO_chrYint.fst")
+snpint <- read.fst("Data/attieDO_allint.fst")
 do <- readRDS("Data/attieDO_v0.rds")
 
 # for samples in replicate, figure out which one to keep
@@ -125,12 +126,14 @@ omit[omit %in% keep] <- paste0(omit[omit %in% keep], "_b")
 
 x <- x[,is.na(match(names(x), omit))]
 y <- y[,is.na(match(names(y), omit))]
+snpint <- snpint[,is.na(match(names(snpint), omit))]
 ids <- ind_ids(do)
 do <- do[ids[!(ids %in% omit)],]
 
 # clean up the names
 names(x) <- sub("_b$", "", names(x))
 names(y) <- sub("_b$", "", names(y))
+names(snpint) <- sub("_b$", "", names(snpint))
 for(i in seq_along(do$geno)) {
     rownames(do$geno[[i]]) <- sub("_b$", "", rownames(do$geno[[i]]))
 }
@@ -141,6 +144,7 @@ names(do$is_female) <- sub("_b$", "", names(do$is_female))
 # reorder by mouse number
 x <- x[, c(1,1+order(as.numeric(sub("DO", "", names(x)[-1]))))]
 y <- y[, c(1,1+order(as.numeric(sub("DO", "", names(y)[-1]))))]
+snpint <- snpint[, c(1,2,2+order(as.numeric(sub("DO", "", names(snpint)[-(1:2)]))))]
 do <- do[order(as.numeric(sub("DO", "", ind_ids(do)))),]
 ```
 
@@ -652,19 +656,22 @@ g[,af_fg > 4] <- 4-g[,af_fg > 4]
 af_fg <- colSums(fg==1)
 
 # genotype frequencies by marker class
-af_g <- matrix(ncol=4, nrow=nrow(g))
-dimnames(af_g) <- list(rownames(g), 1:4)
+af_gind <- matrix(ncol=4, nrow=nrow(g))
+dimnames(af_gind) <- list(rownames(g), 1:4)
 for(i in 1:4) {
-    af_g[,i] <- rowMeans((g[,af_fg==i] - 1)/2, na.rm=TRUE)
+    af_gind[,i] <- rowMeans((g[,af_fg==i] - 1)/2, na.rm=TRUE)
 }
+
+af_gmar <- colMeans((g-1)/2, na.rm=TRUE)
+
 
 prop_missing <- n_missing(do, "ind", "prop")*100
 
 plot_geno_freq_byind <- function(subset=FALSE, density=FALSE)
 {
-    these_af <- af_g
+    these_af <- af_gind
     if(subset) {
-        these_af <- af_g[prop_missing < 10, ]
+        these_af <- af_gind[prop_missing < 10, ]
     }
 
     par(mfrow=c(2,2), mar=c(5.1, 1.1, 2.1, 1.1), cex=1.5)
@@ -908,13 +915,117 @@ class: inverse, middle, center
 
 # Proportion missing data
 
+
+```{r hist_missing_bymar, dev="png", doi=600}
+prop_missing_bymar <- n_missing(do, "mar", "prop")*100
+par(mar=c(5.1, 1.1, 1.1, 1.1), cex=1.7, cex.lab=1.3, cex.axis=1.3)
+hist(prop_missing_bymar, breaks=seq(0, 100, length=201), xlab="Percent missing data (by marker)",
+     ylab="", yaxt="n", main="")
+rug(prop_missing_bymar, col="violetred")
+```
+
 ---
 
 # Genotype frequencies
 
+```{r geno_freq_bymar}
+geno_freq_bymar <- function(density=FALSE) {
+    par(mfrow=c(2,2), mar=c(5.1, 1.1, 1.1, 1.1), cex=1.5)
+    for(i in 1:4) {
+        this_af_gmar <- 1 - af_gmar[af_fg==i]
+
+        breaks <- seq(min(this_af_gmar), max(this_af_gmar), length=101)
+
+        yli <- range(hist(this_af_gmar, breaks=breaks, plot=FALSE)$density)
+
+        if(density) {
+            u <-par("usr")[1:2]
+            u <- seq(min(breaks), max(breaks), len=251)
+            dn <- dnorm(u, i/8, sqrt(i/8*(1-i/8) / 1000))
+            yli <- range(c(yli, dn))
+        }
+
+        hist(this_af_gmar, breaks=breaks, ylim=yli,
+             main=paste0("MAF = ", i, "/8"),
+             yaxt="n", ylab="", xlab="Frequency of minor allele", prob=TRUE)
+        arrows(i/8, par("usr")[3], i/8, 0, len=0.1, lwd=3, col="violetred")
+
+        if(density) lines(u, dn, lwd=2, col="slateblue")
+    }
+}
+geno_freq_bymar(FALSE)
+```
+
 ---
 
-# Proportion of apparent errors
+
+# Genotype frequencies
+
+```{r geno_freq_bymar_wdensity}
+geno_freq_bymar(TRUE)
+# odd markers:
+# mar1 <- "UNC3429406" # founder MAF=4/8 but 20% in DO
+# mar2 <- "UNC3482843" # founder MAF=4/8 but 80% in DO
+```
+
+---
+
+# Genotyping error rates
+
+```{r genotype_errors_bymar, dev="svg", doi=600}
+percent_err_bymar <- nerr_bymar/n_typed(do, "mar")*100
+par(mar=c(5.1, 1.1, 1.1, 1.1), cex=1.5)
+hist(percent_err_bymar, breaks=200,
+     ylab="", yaxt="n", xlab="Percent genotyping errors",
+     main="")
+rug(percent_err_bymar, col="violetred")
+u <- par("usr")
+text(u[1] + diff(u[1:2])*0.25, mean(u[3:4]), adj=c(0, 0.5), cex=1.5,
+     paste0(add_commas(sum(percent_err_bymar==0)), " markers with error rate = 0\n",
+            sum(percent_err_bymar > 1), " markers with error rate > 1%\n",
+            sum(percent_err_bymar > 5), " markers with error rate > 5%\n",
+            sum(percent_err_bymar > 10), " markers with error rate > 10%"))
+```
+
+---
+
+# Genotyping error rate vs percent missing
+
+```{r error_vs_missing_bymar, dev="png", doi=600}
+par(mar=c(5.1,12.1,2.1,12.1), cex=0.9, cex.axis=2.3, cex.lab=2.3)
+grayplot(prop_missing_bymar, percent_err_bymar,
+         xlim=c(0, 92), ylim=c(0, 72), xaxs="i", yaxs="i",
+         xlab="Percent missing data", ylab="Percent errors")
+# ICR107 (70% error rate)
+# UNC5698022, ICR5650 (50% error rate)
+# UNC5698022 looks perfectly clean; my guess is it's misplaced
+# ...placed on chr 11, but map it as a phenotype and it maps to chr 3
+# UNCJPD000988 on chr 2 but maps to chr 6
+# UNC3640234 on chr 18 but maps to chr 2
+# out <- scan1(apr_fst, g[,mar<-"UNC3640234",drop=FALSE], cores=0)
+# plot(out, gmap);find_markerpos(gmap, mar)
+# UNCJPD001874 on chr 4 but maps to chr 5
+# UNCJPD002501 on chr 6 but maps to chr 8 (allele intensity plot still bad)
+# UNC17113030 on chr 14 but maps to chr 9 (allele intensity plot is clean)
+#
+# UNCHS021230 is interesting: reasonably clean allele intensity plot,
+# but most clusters deemed to be errors; want to color them by genotype
+# determined from genotype probabilities
+# ...UNCHS027234 looks just like that; also UNCHS006327
+#
+# UNCrs232949530 is just total crap genotype calls...can kind of see
+# what it should be
+#
+# UNCHS000060 is total total crap SNP allele intensity plot; nothing
+# would work for this one
+#
+# UNCJPD002501, UNCrs50250732, UNCrs241258463 are similarly bad
+#
+# Mit0045 has two clear clusters but errors everywhere
+#
+# UNCHS028710 looks really terrible but in an interesting way
+```
+
 
 ---
 
