@@ -1,5 +1,5 @@
 ---
-title: "Cleaning genotype data for</br>diversity outbred mice"
+title: "Cleaning genotype data for </br>diversity outbred mice"
 author: "[Karl Broman](https://kbroman.org)"
 date: 'Biostatistics & Medical Informatics<br/>University of Wisconsin&ndash;Madison<br/><br/><a href="https://kbroman.org"><code>kbroman.org</code></a><br/><a href="https://github.com/kbroman"><code>github.com/kbroman</code></a><br/><a href="https://twitter.com/kwbroman"><code>@kwbroman</code></a><br/>Slides: <a href="https://bit.ly/2018ctc"><code>bit.ly/2018ctc</code></a>'
 output:
