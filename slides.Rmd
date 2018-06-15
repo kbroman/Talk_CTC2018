@@ -1165,26 +1165,29 @@ for(i in c(1,5,6)) {
 ```{r snpint_nocalls}
 puzzling_nocalls <- c("UNCHS022987", "UNCHS029321",  "UNCHS032160")
 puzzling_crap <- c("UNCHS030819")
+
+file <- "R/_cache/puzzling_nocalls_snpinf.rds"
+if(file.exists(file)) {
+    puzzling_nocalls_snpinf <- readRDS(file)
+} else {
+    puzzling_nocalls_snpinf <- mclapply(puzzling_nocalls, infer_snp, quiet=TRUE, mc.cores=detectCores())
+    saveRDS(puzzling_nocalls_snpinf, file)
+}
+
+par(mar=c(4.1, 5.1, 2.6, 1.1), mfcol=c(2,3), cex=1.2, cex.lab=1.2, cex.axis=1.2, cex.main=1.1)
+for(i in 1:3) {
+    plot_snpint(puzzling_nocalls[i], , "o",
+                mgp.x=c(1.6,0.4,0),
+                main=paste0(puzzling_nocalls[i], "\n(observed genotype)"))
+    plot_snpint(puzzling_nocalls[i], puzzling_nocalls_snpinf[[i]], "i",
+                mgp.x=c(1.6,0.4,0),
+                main=paste0(puzzling_nocalls[i], "\n(inferred genotype)"))
+}
 ```
 
 
----
-
-# Founder missing
-
-```{r snpint_foundermissing}
-founder_missing <- c("UNCrs232949530", "ICR4840", "UNCrs241258463")
-
-# puzzles:
-# ICR107 (70% error rate)
-# ICR5650 (50% error rate)
-```
 
 
-
----
-
-# Area covered by spanning polygons
 
 
 ---
@@ -1194,7 +1197,60 @@ class: inverse, middle, center
 
 ---
 
-# Founder genotyping errors
+# One founder missing
+
+```{r snpint_foundermissing}
+founder_missing <- c("UNCrs232949530", "ICR4840", "UNCrs241258463")
+these_fg <- do.call("cbind", do$founder_geno)[,founder_missing]
+wh_missing <- apply(these_fg, 2, function(a) which(a==0))
+wh_missing <- names(CCcolors)[wh_missing]
+
+file <- "R/_cache/founder_missing_snpinf.rds"
+if(file.exists(file)) {
+    founder_missing_snpinf <- readRDS(file)
+} else {
+    founder_missing_snpinf <- mclapply(founder_missing, infer_snp, quiet=TRUE, mc.cores=detectCores())
+    saveRDS(founder_missing_snpinf, file)
+}
+
+layout(rbind(c(4, 4,1,1,5,5), c(6,2,2,3,3,7)))
+par(mar=c(4.1, 5.1, 2.6, 1.1), cex=1.2, cex.lab=1.2, cex.axis=1.2, cex.main=1.1)
+plot_snpint(founder_missing[1], , "o",
+            mgp.x=c(1.6,0.4,0),
+            main=paste0(founder_missing[1], "\n(observed genotype)"))
+plot_snpint(founder_missing[1], founder_missing_snpinf[[1]][[1]], "i",
+            mgp.x=c(1.6,0.4,0),
+            main=paste0(founder_missing[1], "\n(inferred with ", wh_missing[1], " = AA)"))
+plot_snpint(founder_missing[1], founder_missing_snpinf[[1]][[2]], "i",
+            mgp.x=c(1.6,0.4,0),
+            main=paste0(founder_missing[1], "\n(inferred with ", wh_missing[1], " = BB)"))
+```
+
+---
+
+# Another case with one founder missing
+
+
+```{r snpint_foundermissing_again}
+layout(rbind(c(4, 4,1,1,5,5), c(6,2,2,3,3,7)))
+par(mar=c(4.1, 5.1, 2.6, 1.1), cex=1.2, cex.lab=1.2, cex.axis=1.2, cex.main=1.1)
+plot_snpint(founder_missing[2], , "o",
+            mgp.x=c(1.6,0.4,0),
+            main=paste0(founder_missing[2], "\n(observed genotype)"))
+plot_snpint(founder_missing[2], founder_missing_snpinf[[2]][[1]], "i",
+            mgp.x=c(1.6,0.4,0),
+            main=paste0(founder_missing[1], "\n(inferred with ", wh_missing[2], " = AA)"))
+plot_snpint(founder_missing[2], founder_missing_snpinf[[2]][[2]], "i",
+            mgp.x=c(1.6,0.4,0),
+            main=paste0(founder_missing[1], "\n(inferred with ", wh_missing[2], " = BB)"))
+```
+
+
+
+---
+
+
+# Two founders missing
 
 - Apparent genotyping errors by inferred genotype
 
