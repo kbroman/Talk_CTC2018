@@ -1246,13 +1246,6 @@ plot_snpint(founder_missing[2], founder_missing_snpinf[[2]][[2]], "i",
 ---
 
 
-# Two founders missing
-
-- Apparent genotyping errors by inferred genotype
-
-
----
-
 # Summary
 
 - Quality of results depends on quality of data
