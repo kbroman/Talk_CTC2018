@@ -14,3 +14,4 @@ ctc2018.zip: docs/index.html
 	mv docs/ctc2018.zip .
 
 all: ctc2018.zip
+zip: ctc2018.zip
