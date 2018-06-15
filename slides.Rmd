@@ -37,6 +37,8 @@ iArrows <- igraph:::igraph.Arrows
 library(lineup2)
 library(knitr)
 library(kableExtra)
+library(parallel)
+set.seed(63790040)
 ```
 
 # Heterogeneous stock
@@ -273,7 +275,8 @@ het_vs_xint <- function(labels=FALSE) {
 par(mar=c(6.1,5.1,1.6,1.1), cex=1.7, cex.axis=1.3, cex.lab=1.3)
 grayplot(xm, prop_het, bg=purple_green[do$is_female + 1],
          ylab="proportion het on X",
-         xlab="average X chr intensity")
+         xlab="average X chr intensity",
+         ylim=c(0,0.85), yaxs="i")
 on_top <- (do$is_female & xm < 0.4)
 points(xm[on_top], prop_het[on_top], pch=21, bg=purple_green[2])
 legend("topright", pch=21, pt.bg=purple_green, c("male", "female"), bg="gray90")
@@ -835,18 +838,19 @@ text(seq(50, 450, by=100), rep(617, 5), paste("gen", gen),
 # Estimated percent of genotyping errors
 
 ```{r genotype_errors}
+errlod_file <- "R/_cache/errlod.rds"
+if(file.exists(errlod_file)) {
+    errlod <- readRDS(errlod_file)
+} else {
+    errlod <- calc_errorlod(do, pr_fst, cores=0)
+    saveRDS(errlod, errlod_file)
+}
+errlod <- do.call("cbind", errlod)
+
 file <- "R/_cache/n_err.RData"
 if(file.exists(file)) {
     load(file)
 } else {
-    errlod_file <- "R/_cache/errlod.rds"
-    if(file.exists(errlod_file)) {
-        errlod <- readRDS(errlod_file)
-    } else {
-        errlod <- calc_errorlod(do, pr_fst, cores=0)
-        saveRDS(errlod, errlod_file)
-    }
-    errlod <- do.call("cbind", errlod)
     nerr_byind <- rowSums(errlod > 4)
     nerr_bymar <- colSums(errlod > 4)
     save(nerr_byind, nerr_bymar, file=file)
@@ -1000,37 +1004,6 @@ grayplot(prop_missing_bymar, percent_err_bymar,
          mgp.x=c(3.1,0.8,0))
 ```
 
-```{r problem_markers}
-# ICR107 (70% error rate)
-# UNC5698022, ICR5650 (50% error rate)
-# UNC5698022 looks perfectly clean; my guess is it's misplaced
-# ...placed on chr 11, but map it as a phenotype and it maps to chr 3
-# UNCJPD000988 on chr 2 but maps to chr 6
-# UNC3640234 on chr 18 but maps to chr 2
-# out <- scan1(apr_fst, g[,mar<-"UNC3640234",drop=FALSE], cores=0)
-# plot(out, gmap);find_markerpos(gmap, mar)
-# UNCJPD001874 on chr 4 but maps to chr 5
-# UNCJPD002501 on chr 6 but maps to chr 8 (allele intensity plot still bad)
-# UNC17113030 on chr 14 but maps to chr 9 (allele intensity plot is clean)
-#
-# UNCHS021230 is interesting: reasonably clean allele intensity plot,
-# but most clusters deemed to be errors; want to color them by genotype
-# determined from genotype probabilities
-# ...UNCHS027234 looks just like that; also UNCHS006327
-#
-# UNCrs232949530 is just total crap genotype calls...can kind of see
-# what it should be
-#
-# UNCHS000060 is total total crap SNP allele intensity plot; nothing
-# would work for this one
-#
-# UNCrs50250732, UNCrs241258463 are similarly bad
-#
-# Mit0045 has two clear clusters but errors everywhere
-#
-# UNCHS028710 looks really terrible but in an interesting way
-```
-
 ---
 
 # Genotyping error rate vs percent missing
@@ -1054,7 +1027,160 @@ axis(side=2, at=logtickpos, tickpos, tick=FALSE, mgp=c(0, 0.3, 0), las=1)
 
 ---
 
-# Apparent errors, shown in intensity plots
+# Nice markers
+
+```{r snpint_nice}
+source("R/plot_snpint.R")
+best <- names(prop_missing_bymar)[prop_missing_bymar<5 & percent_err_bymar==0]
+mar <- sample(best, 6)
+par(mar=c(5.1, 5.1, 1.6, 1.1), mfrow=c(2,3), cex=1.2, cex.lab=1.2, cex.axis=1.2, cex.main=1.2)
+for(i in mar) plot_snpint(i, , "o", main=i)
+```
+
+
+---
+
+# Crap markers
+
+```{r snpint_crap}
+terrible <- c("UNCHS028710", "UNCHS000060", "UNCrs50250732", "UNCrs241258463",
+              "UNCrs50250732", "UNC20052086")
+
+file <- "R/_cache/terrible_snpinf.rds"
+if(file.exists(file)) {
+    terrible_snpinf <- readRDS(file)
+    # UNCrs241258463 has a missing founder genotype; using the better (3) genotype
+    terrible_snpinf[[4]] <- terrible_snpinf[[4]][[1]]
+} else {
+    terrible_snpinf <- mclapply(terrible, infer_snp, quiet=TRUE, mc.cores=detectCores())
+    saveRDS(terrible_snpinf, file)
+}
+
+xmx <- c(0.52, 1.50, 0.6, 0.66, 0.60, 0.78)
+ymx <- c(1.95, 0.70, 0.4, 0.15, 0.40, 0.46)
+par(mar=c(4.1, 5.1, 2.6, 1.1), mfcol=c(2,3), cex=1.2, cex.lab=1.2, cex.axis=1.2, cex.main=1.1)
+for(i in 1:3) {
+    plot_snpint(terrible[i], , "o",
+                xlim=c(0, xmx[i]), ylim=c(0, ymx[i]), xaxs="i", yaxs="i",
+                mgp.x=c(1.6,0.4,0),
+                main=paste0(terrible[i], "\n(observed genotype)"))
+    plot_snpint(terrible[i], terrible_snpinf[[i]], "i",
+                xlim=c(0, xmx[i]), ylim=c(0, ymx[i]), xaxs="i", yaxs="i",
+                mgp.x=c(1.6,0.4,0),
+                main=paste0(terrible[i], "\n(inferred genotype)"))
+}
+```
+
+---
+
+# More crap markers
+
+```{r snpint_more_crap}
+par(mar=c(4.1, 5.1, 2.6, 1.1), mfcol=c(2,3), cex=1.2, cex.lab=1.2, cex.axis=1.2, cex.main=1.1)
+for(i in 4:6) {
+    plot_snpint(terrible[i], , "o",
+                xlim=c(0, xmx[i]), ylim=c(0, ymx[i]), xaxs="i", yaxs="i",
+                mgp.x=c(1.6,0.4,0),
+                main=paste0(terrible[i], "\n(observed genotype)"))
+    plot_snpint(terrible[i], terrible_snpinf[[i]], "i",
+                xlim=c(0, xmx[i]), ylim=c(0, ymx[i]), xaxs="i", yaxs="i",
+                mgp.x=c(1.6,0.4,0),
+                main=paste0(terrible[i], "\n(inferred genotype)"))
+}
+```
+
+
+
+---
+
+# One bad blob
+
+```{r snpint_onebadblob}
+blob_miscalled <- c("UNCHS021230", "UNCHS027234", "UNCHS000176")
+
+file <- "R/_cache/blob_miscalled_snpinf.rds"
+if(file.exists(file)) {
+    blob_miscalled_snpinf <- readRDS(file)
+} else {
+    blob_miscalled_snpinf <- mclapply(blob_miscalled, infer_snp, quiet=TRUE, mc.cores=detectCores())
+    saveRDS(blob_miscalled_snpinf, file)
+}
+
+par(mar=c(4.1, 5.1, 2.6, 1.1), mfcol=c(2,3), cex=1.2, cex.lab=1.2, cex.axis=1.2, cex.main=1.1)
+for(i in 1:3) {
+    plot_snpint(blob_miscalled[i], , "o",
+                mgp.x=c(1.6,0.4,0),
+                main=paste0(blob_miscalled[i], "\n(observed genotype)"))
+    plot_snpint(blob_miscalled[i], blob_miscalled_snpinf[[i]], "i",
+                mgp.x=c(1.6,0.4,0),
+                main=paste0(blob_miscalled[i], "\n(inferred genotype)"))
+}
+```
+
+---
+
+# Wrong genomic coordinates
+
+```{r snpint_wrong_location}
+wrong_location <- c("UNC5698022", "UNCJPD000988", "UNC3640234",
+                    "UNCJPD001874", "UNCJPD002501", "Mit0045",
+                    "Mit016", "UNCJPD001230", "UNC17110748")
+slightly_wrong <- "UNC684769" # looks like it belongs 3 cM over (23.77 cM rather than 20.97)
+# mar <- "UNC17110748"
+# out <- scan1(apr_fst, g[,mar,drop=FALSE], cores=0)
+# plot(out, gmap);find_markerpos(gmap, mar)
+
+## mtdna genotype
+#mtdna <- readRDS("Data/inferred_mtdna.rds")
+#names(mtdna) <- sprintf("DO%03d", as.numeric(sub("DO-", "", names(mtdna))))
+#mtdna <- mtdna[order(as.numeric(sub("DO", "", names(mtdna))))]
+#table(do$geno[[1]][names(mtdna),"Mit0045"], mtdna)
+#table(do$geno[[1]][names(mtdna),"Mit0016"], mtdna)
+
+file <- "R/_cache/wrong_location_snpinf.rds"
+if(file.exists(file)) {
+    wrong_location_snpinf <- readRDS(file)
+    wrong_location_snpinf[[8]] <- wrong_location_snpinf[[8]][[1]]
+} else {
+    wrong_location_snpinf <- mclapply(wrong_location, infer_snp, quiet=TRUE, mc.cores=detectCores())
+    saveRDS(wrong_location_snpinf, file)
+}
+
+par(mar=c(4.1, 5.1, 2.6, 1.1), mfcol=c(2,3), cex=1.2, cex.lab=1.2, cex.axis=1.2, cex.main=1.1)
+for(i in c(1,5,6)) {
+    plot_snpint(wrong_location[i], , "o",
+                mgp.x=c(1.6,0.4,0),
+                main=paste0(wrong_location[i], "\n(observed genotype)"))
+    plot_snpint(wrong_location[i], wrong_location_snpinf[[i]], "i",
+                mgp.x=c(1.6,0.4,0),
+                main=paste0(wrong_location[i], "\n(inferred genotype)"))
+}
+```
+
+
+---
+
+# Puzzling no calls
+
+```{r snpint_nocalls}
+puzzling_nocalls <- c("UNCHS022987", "UNCHS029321",  "UNCHS032160")
+puzzling_crap <- c("UNCHS030819")
+```
+
+
+---
+
+# Founder missing
+
+```{r snpint_foundermissing}
+founder_missing <- c("UNCrs232949530", "ICR4840", "UNCrs241258463")
+
+# puzzles:
+# ICR107 (70% error rate)
+# ICR5650 (50% error rate)
+```
+
+
 
 ---
 

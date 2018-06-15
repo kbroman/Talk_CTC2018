@@ -24,33 +24,16 @@
 # g[g==0] <- 4
 # fg <- do.call("cbind", do$founder_geno)
 #
-# mar <- "UNCHS021230"
-# mar <- "UNCHS027234"
-# mar <- "UNCHS006327"
-# mar <- "UNCrs232949530" # (F founder missing; looks like it should be 1)
-#                         # ... tried both and this fit the allele intensities clusters better
-# mar <- "Mit0045" # genotypes have no relationship to the allele intensities (my guess this is mitochondrial?)
-# mar <- "UNCHS028710"
-# mar <- "UNCHS000060"
-# mar <- "UNCJPD002501" # inferred snp genotypes have no relationship to snp intensity plot
-#                       # ...because the snp doesn't actually belong at the cited position
-# mar <- "UNCrs50250732" # observed genotype calls really odd, but in any way this is a hard one
-# mar <- "ICR4840"  # founder D is missing; clearly should be 3
-# mar <- "UNCHS032160" # extra blob; should be clear but terrible calls ... last 2 waves all NA
-# mar <- "UNCHS006705" # hard to call but mostly right; well-placed blobs but they bleed together
-# mar <- "UNC9180222"  # ugly partly due to low MAF
-# mar <- "UNCHS022987" # puzzling no calls; mostly in waves 3 and 4
-# mar <- "UNCHS029321" # similar...no calls mostly in wave 2
 
 infer_snp <-
     function(marker, cross=do, genoprobs=pr_fst, map=gmap, sdp=NULL, quiet=FALSE, ...)
 {
     require(qtl2)
     require(qtl2fst)
-    pos <- find_markerpos(map, mar)
+    pos <- find_markerpos(map, marker)
 
     if(is.null(sdp)) {
-        this_fg <- t(cross$founder_geno[[pos$chr]][,mar,drop=FALSE])
+        this_fg <- t(cross$founder_geno[[pos$chr]][,marker,drop=FALSE])
 
         if(any(this_fg==0)) {
             # loop over all possible ways of filling in the data
@@ -72,7 +55,7 @@ infer_snp <-
         }
     }
 
-    snpinfo <- data.frame(chr=pos$chr, pos=pos$pos, snp=mar,
+    snpinfo <- data.frame(chr=pos$chr, pos=pos$pos, snp=marker,
                           sdp=sdp)
     snpinfo <- index_snps(map, snpinfo)
     snp_pr <- genoprob_to_snpprob(genoprobs, snpinfo)
@@ -85,7 +68,8 @@ infer_snp <-
 plot_snpint <-
     function(marker, snp_inf=NULL, use=c("observed", "inferred", "error", "geno_and_error", "genoinf_and_error"),
              cross=do, snp_int=snpint, genoprobs=pr_fst, map=gmap,
-             error_lod=errlod, pointcolors=NULL, error_threshold=4, ...)
+             error_lod=errlod, pointcolors=NULL, error_threshold=4,
+             omit=c("DO274", "DO306", "DO308", "DO309", "DO340", "DO357", "DO397"), ...)
 {
     use <- match.arg(use)
     if(use=="inferred" && is.null(snp_inf)) {
@@ -94,12 +78,22 @@ plot_snpint <-
 
     intA <- unlist(snp_int[snp_int[,1]==marker & snp_int[,2]=="X", -(1:2)])
     intB <- unlist(snp_int[snp_int[,1]==marker & snp_int[,2]=="Y", -(1:2)])
+    err <- 1 + (errlod[,mar] > error_threshold)
 
     if(use=="inferred" || use=="genoinf_and_error") geno <- snp_inf
     else if(use=="observed" || use=="geno_and_error") geno <- do.call("cbind", cross$geno)[,marker]
-    else if(use=="error") geno <- 1 + (error_lod[,mar] > error_threshold)
+    else if(use=="error") geno <- err
 
     if(use != "error") geno[geno==0 | is.na(geno)] <- 4
+
+    id <- qtl2::get_common_ids(intA, intB, geno)
+    if(!is.null(omit)) id <- id[!(id %in% omit)]
+
+    intA <- intA[id]
+    intB <- intB[id]
+    geno <- geno[id]
+    err <- err[id]
+
 
     if(is.null(pointcolors)) {
         if(use != "error") pointcolors <- broman::brocolors("f2")
@@ -107,7 +101,6 @@ plot_snpint <-
     }
 
     if(use=="geno_and_error" || use=="genoinf_and_error") {
-        err <- 1 + (errlod[,mar] > error_threshold)
         linewidth <- c(1,2)[err]
         linecolor <- c("black", broman::brocolors("sex")[1])[err]
     } else {
@@ -116,9 +109,8 @@ plot_snpint <-
     }
 
 
-    id <- qtl2::get_common_ids(intA, intB, geno)
 
-    this_plot <- function(x, y, pch=21, bg=pointcolors[geno[id]], col=linecolor, lwd=linewidth,
+    this_plot <- function(x, y, pch=21, bg=pointcolors[geno], col=linecolor, lwd=linewidth,
                           xlab="intensity A", ylab="intensity B", ...)
         grayplot(x, y, pch=pch, bg=bg, xlab=xlab, ylab=ylab, col=col, lwd=lwd, ...)
 
