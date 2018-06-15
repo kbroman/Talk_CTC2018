@@ -1019,7 +1019,7 @@ grayplot(prop_missing_bymar, percent_err_bymar,
 # UNCHS000060 is total total crap SNP allele intensity plot; nothing
 # would work for this one
 #
-# UNCJPD002501, UNCrs50250732, UNCrs241258463 are similarly bad
+# UNCrs50250732, UNCrs241258463 are similarly bad
 #
 # Mit0045 has two clear clusters but errors everywhere
 #
