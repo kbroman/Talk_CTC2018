@@ -24,7 +24,8 @@ curves_width <- ifelse(ratio=='4:3', 800, 1080)
 options(htmltools.dir.version = FALSE)
 knitr::opts_chunk$set(dev="svg", echo=FALSE, results="hide",
                       fig.height=fig_height,
-                      fig.width=fig_width)
+                      fig.width=fig_width,
+                      warning=FALSE, message=FALSE)
 xaringan::summon_remark() # download latest version, locally
 suppressMessages(library(fst))
 library(qtl2)
@@ -992,10 +993,14 @@ text(u[1] + diff(u[1:2])*0.25, mean(u[3:4]), adj=c(0, 0.5), cex=1.5,
 # Genotyping error rate vs percent missing
 
 ```{r error_vs_missing_bymar, dev="png", doi=600}
-par(mar=c(5.1,12.1,2.1,12.1), cex=0.9, cex.axis=2.3, cex.lab=2.3)
+par(mar=c(5.1,12.1,2.1,12.1), cex=1.0, cex.axis=2.1, cex.lab=2.1)
 grayplot(prop_missing_bymar, percent_err_bymar,
-         xlim=c(0, 92), ylim=c(0, 72), xaxs="i", yaxs="i",
-         xlab="Percent missing data", ylab="Percent errors")
+         xlim=c(0, 100), ylim=c(0, 100), xaxs="i", yaxs="i",
+         xlab="Percent missing data", ylab="Percent errors",
+         mgp.x=c(3.1,0.8,0))
+```
+
+```{r problem_markers}
 # ICR107 (70% error rate)
 # UNC5698022, ICR5650 (50% error rate)
 # UNC5698022 looks perfectly clean; my guess is it's misplaced
@@ -1026,6 +1031,26 @@ grayplot(prop_missing_bymar, percent_err_bymar,
 # UNCHS028710 looks really terrible but in an interesting way
 ```
 
+---
+
+# Genotyping error rate vs percent missing
+
+```{r error_vs_missing_bymar_logscale, dev="png", doi=600}
+par(mar=c(5.1,12.1,2.1,12.1), cex=1.0, cex.axis=2.1, cex.lab=2.1)
+x <- prop_missing_bymar
+y <- percent_err_bymar
+keep <- x > 0 & y > 0
+x <- x[keep]
+y <- y[keep]
+tickpos <- c(0.1, 1/2, 1, 2, 5, 10, 20, 50, 100)
+logtickpos <- log10(tickpos)
+grayplot(log10(x), log10(y),
+         xat=NA, yat=NA, vlines=logtickpos, hlines=logtickpos,
+         xlim=log10(c(0.1, 100)), ylim=log10(c(0.1, 100)), xaxs="i", yaxs="i",
+         xlab="Percent missing data", ylab="Percent errors")
+axis(side=1, at=logtickpos, tickpos, tick=FALSE, mgp=c(3.1, 0.8, 0))
+axis(side=2, at=logtickpos, tickpos, tick=FALSE, mgp=c(0, 0.3, 0), las=1)
+```
 
 ---
 
@@ -1080,7 +1105,7 @@ class: middle, indent
 # &nbsp;
 
 Slides: [`bit.ly/2018ctc`](https://bit.ly/2018ctc)
-.cc0-button[ [![CC0](CC0_button.svg)](https://creativecommons.org/publicdomain/zero/1.0) ]
+.cc0-badge[ [![CC0](cc-zero.svg)](https://creativecommons.org/publicdomain/zero/1.0) ]
 
 [`kbroman.org`](https://kbroman.org)
 
