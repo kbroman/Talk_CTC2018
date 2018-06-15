@@ -913,10 +913,6 @@ class: inverse, middle, center
 
 ---
 
-# SNP intensities at selected markers
-
-
----
 
 # Proportion missing data
 
@@ -1203,7 +1199,7 @@ class: inverse, middle, center
 founder_missing <- c("UNCrs232949530", "ICR4840", "UNCrs241258463")
 these_fg <- do.call("cbind", do$founder_geno)[,founder_missing]
 wh_missing <- apply(these_fg, 2, function(a) which(a==0))
-wh_missing <- names(CCcolors)[wh_missing]
+wh_missing <- names(qtl2::CCcolors)[wh_missing]
 
 file <- "R/_cache/founder_missing_snpinf.rds"
 if(file.exists(file)) {
