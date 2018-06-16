@@ -653,6 +653,46 @@ class: inverse, middle, center
 
 # Array intensities
 
+```{r array_intensities_densities, dev="png", doi=600}
+file <- "R/_cache/array_intensities_densities.rds"
+if(file.exists(file)) {
+    d <- readRDS(file)
+} else {
+    aa <- a;aa[a>5] <- 5
+    d <- apply(aa, 2, function(x) density(x[!is.na(x)], from=0, to=5,
+                                          window=0.1, n=251, kernel="gaussian")$y)
+    colnames(d) <- colnames(a)
+    saveRDS(d, file)
+}
+
+dx <- seq(0, 5, len=251)
+gray <- "gray60"
+par(mar=c(5.1, 1.1, 1.1, 1.1), cex.lab=2, cex.axis=1.7)
+grayplot(dx, d[,1], type="l", col=gray,
+         xlim=c(0, 5), xaxs="i", ylim=range(d)*1.03, yaxs="i",
+         xlab="SNP intensity", yat=NA, hlines=pretty(range(d)), ylab="")
+for(i in 2:ncol(d)) lines(dx, d[,i], col=gray)
+for(i in paste0("DO", c(306, 308, 309, 340, 357, 397, 274)))
+    lines(dx, d[,i], col="black")
+```
+
+
+---
+
+# Array intensities
+
+```{r array_intensities_boxplots}
+a <- (snpint[seq(1, nrow(snpint), by=2), -(1:2)] +
+      snpint[seq(2, nrow(snpint), by=2), -(1:2)])
+med <- apply(a, 2, median, na.rm=TRUE)
+par(cex.axis=1.5, cex.lab=1.5, mar=c(5.1, 5.1, 1.1, 6.1))
+manyboxplot(a[,order(med)[1:100]], dotcol=brocolors("web")["blue"],
+            probs=c(0.01, 0.05, 0.1, 0.25), yaxs="i", ylim=c(0, 5.05),
+            linecol=brocolors("web")[c("green", "red", "purple", "black")],
+            xlab="First 100 mice (when ordered by median)", ylab="Quantiles of SNP intensities")
+```
+
+
 ---
 
 # Genotype frequencies, by individual
