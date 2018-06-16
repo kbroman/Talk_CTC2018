@@ -1314,7 +1314,15 @@ plot_snpint(founder_missing[2], founder_missing_snpinf[[2]][[2]], "i",
 
 - Think about what might have gone wrong, and how it might be revealed
 
-- Consider the order in apply procedures
+- Pulling out the bad samples is the most important thing
+
+- Sex swaps: look at array intensities
+
+- Look for sample duplicates, and if possible sample mix-ups
+
+- Samples: missing data, array intensities, crossovers, errors
+
+- Markers: lots of reasons for the bad ones
 
 ---
 class: indent
