@@ -606,7 +606,7 @@ microbiome_best_vs_self <- function(label=FALSE)
 
     if(!label) return()
 
-    par(cex=1.5)
+    par(cex=1.7)
     text(0.17, 0.145, "bad DNA", col=brocolors("web")["purple"])
     text(0.18, 0.025, "mix-ups", col="violetred")
     text(0.14, 0.09, "mixtures", col=brocolors("web")["green"], adj=c(1, 0.5))
