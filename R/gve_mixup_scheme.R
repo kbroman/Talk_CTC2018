@@ -53,13 +53,13 @@ text(mean(x2), y1[1]-ytgap, "expression traits", cex=1.2, col=maincolor, font=2)
 text(x2[1]-xtgap, mean(y2), "mRNA samples", srt=90)
 text(mean(x2), y2[2]+ytgap, "genes with strong eQTL")
 
+if(version==1) return()
+
 recw <- 1.2
 rect(x1[1]+diff(x1)*0.2, y1[1], x1[1]+diff(x1)*0.2+recw, y2[2],
      col=CCcolor[1])
 rect(x2[1]+diff(x2)*0.2, y1[1], x2[1]+diff(x2)*0.2+recw, y2[2],
      col=CCcolor[1])
-
-if(version==1) return()
 
 
 arrowgap <- 4.5
