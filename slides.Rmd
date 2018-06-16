@@ -667,18 +667,21 @@ if(file.exists(file)) {
     saveRDS(d, file)
 }
 
+wave <- setNames(do$covar$wave, rownames(do$covar))
+bad <- paste0("DO", c(306, 308, 309, 340, 357, 397, 274))
 dx <- seq(0, 5, len=251)
-gray <- "gray60"
-par(mfrow=c(2,3),mar=c(5.1, 1.1, 1.1, 1.1), cex.lab=2, cex.axis=1.7)
-wave <- setNames(do$covar$wave, rownames(do$covar)
+gray <- "gray65"
+layout(rbind(c(6,1,1,2,2,6),c(3,3,4,4,5,5)))
+par(mar=c(5.1, 1.1, 2.1, 1.1), cex.lab=2, cex.axis=1.7, cex.main=2)
 for(i in 1:5) {
-    grayplot(dx, d[,1], type="n", col=gray,
+    grayplot(dx, d[,1], type="n", col=gray, main=paste("wave", i),
              xlim=c(0, 5), xaxs="i", ylim=range(d)*1.03, yaxs="i",
              xlab="SNP intensity", yat=NA, hlines=pretty(range(d)), ylab="")
-    for(
-    for(i in 2:ncol(d)) lines(dx, d[,i], col=gray)
-for(i in paste0("DO", c(306, 308, 309, 340, 357, 397, 274)))
-    lines(dx, d[,i], col="black")
+    for(j in names(wave)[wave==i])
+        lines(dx, d[,j], col="gray")
+    for(j in bad[wave[bad]==i])
+        lines(dx, d[,j], col="violetred", lwd=2)
+}
 ```
 
 
