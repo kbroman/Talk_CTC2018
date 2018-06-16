@@ -368,6 +368,22 @@ gve_scheme(2)
 
 ---
 
+# Sample mix-ups
+
+```{r mixup_illustration_3}
+gve_scheme(3)
+```
+
+---
+
+# Sample mix-ups
+
+```{r mixup_illustration_4}
+gve_scheme(4)
+```
+
+---
+
 # RNA-seq sample mix-ups: distance matrix
 
 ```{r gve_dist_image, dev="png", dpi=600}

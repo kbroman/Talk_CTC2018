@@ -59,6 +59,9 @@ rect(x1[1]+diff(x1)*0.2, y1[1], x1[1]+diff(x1)*0.2+recw, y2[2],
 rect(x2[1]+diff(x2)*0.2, y1[1], x2[1]+diff(x2)*0.2+recw, y2[2],
      col=CCcolor[1])
 
+if(version==1) return()
+
+
 arrowgap <- 4.5
 arroww <- 5
 arrows(x2[2]+arrowgap, mean(y1), x2[2]+arrowgap+arroww, mean(y1), len=0.1, angle=15, col=maincolor, lwd=2)
@@ -80,7 +83,7 @@ e <- mean(y1) - ((e  - mean(range(e, na.rm=TRUE)))/diff(range(e, na.rm=TRUE))*di
 
 points(og, e, bg="lightblue", pch=21, cex=0.8)
 
-if(version==1) return()
+if(version==2) return()
 
                                       # part C
 y3 <- y1+y1[2]+ygap+10
@@ -97,6 +100,8 @@ text(mean(x2), y4[1]-ytgap, "expression traits", cex=1.2, col=maincolor, font=2)
 text(x2[1]-xtgap, mean(y4), "mRNA samples", srt=90)
 text(mean(x2), y4[2]+ytgap, "eQTL")
 
+if(version==3) return()
+
 arrows(x2[2]+arrowgap, mean(y3), x2[2]+arrowgap+arroww, mean(y3), len=0.1, angle=15, col=maincolor, lwd=2)
 
 rech <- 1.3
@@ -110,6 +115,7 @@ rect(x3[1], y5[1], x3[2], y5[2])
 text(x3[1]-xtgap, mean(y5), "DNA samples", srt=90)
 text(mean(x3), y5[2]+ytgap, "mRNA samples")
 text(mean(x3), y5[1]-ytgap, "similarity matrix", cex=1.2, col=maincolor, font=2)
+
 
 
                                       # colors
