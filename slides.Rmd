@@ -939,6 +939,12 @@ par(mar=c(5.1, 1.1, 1.1, 1.1), cex=1.7, cex.lab=1.3, cex.axis=1.3)
 hist(prop_missing_bymar, breaks=seq(0, 100, length=201), xlab="Percent missing data (by marker)",
      ylab="", yaxt="n", main="")
 rug(prop_missing_bymar, col="violetred")
+u <- par("usr")
+text(u[1] + diff(u[1:2])*0.25, mean(u[3:4]), adj=c(0, 0.5), cex=1.5,
+     paste0(add_commas(sum(prop_missing_bymar==0)), " markers with no missing data\n",
+            add_commas(sum(prop_missing_bymar <= 2)), " markers missing ≤ 2%\n",
+            add_commas(sum(prop_missing_bymar > 10)), " markers missing > 10%\n",
+            add_commas(sum(prop_missing_bymar > 20)), " markers missing > 20%"))
 ```
 
 ---
