@@ -78,7 +78,7 @@ plot_snpint <-
 
     intA <- unlist(snp_int[snp_int[,1]==marker & snp_int[,2]=="X", -(1:2)])
     intB <- unlist(snp_int[snp_int[,1]==marker & snp_int[,2]=="Y", -(1:2)])
-    err <- 1 + (errlod[,mar] > error_threshold)
+    err <- 1 + (errlod[,marker] > error_threshold)
 
     if(use=="inferred" || use=="genoinf_and_error") geno <- snp_inf
     else if(use=="observed" || use=="geno_and_error") geno <- do.call("cbind", cross$geno)[,marker]
