@@ -848,6 +848,27 @@ geno_freq_byind(TRUE)
 
 ---
 
+# Heterozygosities, by individual
+
+```{r het_byind}
+par(mfrow=c(2,2), mar=c(5.1, 1.1, 2.1, 1.1), cex=1.5)
+for(i in 1:4) {
+    expected <- i/8*(8-i)/8*2
+    breaks <- seq(expected-0.1, expected+0.1, len=45)
+
+    keep <- names(prop_missing)[prop_missing < 10]
+
+    hist(indfreq_by_maf[[i]][keep,2], breaks=breaks,
+         main=paste0("founder MAF = ", i, "/8"),
+         yaxt="n", ylab="", xlab="Frequency of minor allele")
+    arrows(expected, par("usr")[3], expected, 0, len=0.1, lwd=3, col="violetred")
+
+}
+```
+
+
+---
+
 # Genotype probabilities (one mouse on one chr)
 
 ```{r plot_genoprob, dev="png", dpi=600}
@@ -1113,6 +1134,27 @@ for(i in 1:4) {
     text(u[1:2] %*% c(0.4, 0.6), u[3:4] %*% c(0.25, 0.75),
          paste0("founder MAF = ", i, "/8"), adj=c(0, 0.5),
          col="slateblue", font=2, cex=0.9)
+}
+```
+
+---
+
+
+# Heterozygosities, by marker
+
+```{r het_bymar}
+par(mfrow=c(2,2), mar=c(5.1, 1.1, 2.1, 1.1), cex=1.5)
+for(i in 1:4) {
+    expected <- i/8*(8-i)/8*2
+    breaks <- seq(0, 1, len=101)
+    xli <- c(expected-0.22, expected+0.2)
+
+    hist(marfreq[n1==i,2], breaks=breaks,
+         main=paste0("founder MAF = ", i, "/8"),
+         xlim=xli, xaxs="i",
+         yaxt="n", ylab="", xlab="Frequency of minor allele")
+    arrows(expected, par("usr")[3], expected, 0, len=0.1, lwd=3, col="violetred")
+
 }
 ```
 
