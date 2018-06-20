@@ -5,6 +5,7 @@ meeting](http://www.complextrait.org/ctc2018/) in Glasgow in
 June, 2018.
 
 Rendered slides: <https://kbroman.org/Talk_CTC2018>
+([or as pdf](https://kbroman.org/Talk_CTC2018/broman_ctc2018.pdf))
 
 Note that the primary data files are not provided, and you won't be able to
 build the slides without them.
