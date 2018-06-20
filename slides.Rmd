@@ -752,6 +752,100 @@ plot_allele_freq_byind(TRUE)
 plot_allele_freq_byind(TRUE, TRUE)
 ```
 
+---
+
+# Genotype frequencies, by individual
+
+
+```{r geno_freq_byind}
+file <- "R/_cache/genofreq.RData"
+if(file.exists(file)) {
+    load(file)
+} else {
+    # grab data
+    g <- do.call("cbind", do$geno[1:19])
+    fg <- do.call("cbind", do$founder_geno[1:19])
+    g[g==0] <- NA
+
+    # drop markers with missing founder genotypes
+    keep <- colSums(fg==0)==0
+    g <- g[,keep]
+    fg <- fg[,keep]
+
+    # make 1 the minor allele in all cases
+    n3 <-  colSums(fg==3)
+    g[,n3<4] <- 4-g[,n3<4]
+    fg[,n3<4] <- 4-fg[,n3<4]
+    n1 <-  colSums(fg==1)
+
+    indfreq <- rbind(rowSums(g==1, na.rm=TRUE),
+                     rowSums(g==2, na.rm=TRUE),
+                     rowSums(g==3, na.rm=TRUE))
+    marfreq <- rbind(colSums(g==1, na.rm=TRUE),
+                     colSums(g==2, na.rm=TRUE),
+                     colSums(g==3, na.rm=TRUE))
+
+    indfreq <- t(indfreq)/colSums(indfreq)
+    marfreq <- t(marfreq)/colSums(marfreq)
+
+    indfreq_by_maf <- vector("list", 4)
+    for(i in 1:4) {
+        gg <- g[,n1 == i]
+        indfreq_by_maf[[i]] <- rbind(rowSums(gg==1, na.rm=TRUE),
+                                     rowSums(gg==2, na.rm=TRUE),
+                                     rowSums(gg==3, na.rm=TRUE))
+        indfreq_by_maf[[i]] <- t(indfreq_by_maf[[i]])/colSums(indfreq_by_maf[[i]])
+    }
+    save(indfreq, marfreq, indfreq_by_maf, n1, file=file)
+}
+
+geno_freq_byind <-
+function(label=FALSE)
+{
+    require(broman)
+
+    mycolors <- paste0(brocolors("web")[c("purple", "green", "blue", "black")], "33")
+
+    layout(rbind(c(5,1,1,2,2,6),c(7,3,3,4,4,8)))
+    par(cex=1.5)
+    for(i in 1:4) {
+        par(mar=rep(0,4), bty="n")
+        triplot(c("AA", "AB", "BB"))
+        pts <-tripoints(indfreq_by_maf[[i]], cex=0.8, pch=16, col=mycolors[i])
+        u <- par("usr")
+        text(u[1:2] %*% c(0.4, 0.6), u[3:4] %*% c(0.25, 0.75),
+             paste0("founder MAF = ", i, "/8"), adj=c(0, 0.5),
+             col="slateblue", font=2, cex=0.9)
+        if(label) {
+            labels <- list(paste0("DO", c(306, 308, 340, 397)),
+                           paste0("DO", c(306, 308, 340, 397)),
+                           paste0("DO", c(306, 308, 340, 397, 125, 357)),
+                           paste0("DO", c(308, 340, 397, 125, 357)))
+            dir <- list(c(1,1,-1,1),
+                        c(1,1,-1,1),
+                        c(1,1,-1,1,1,-1),
+                        c(1,-1,-1,1,-1))
+
+
+            for(j in seq_along(labels[[i]])) {
+               lab <- labels[[i]][j]
+               text(pts[lab,1]+0.04*dir[[i]][j], pts[lab,2], lab, adj=c(ifelse(dir[[i]][j]==1,0,1), 0.5))
+            }
+        }
+    }
+}
+geno_freq_byind(FALSE)
+```
+
+---
+
+# Genotype frequencies, by individual
+
+```{r geno_freq_byind_wlabels}
+geno_freq_byind(TRUE)
+```
+
+
 
 ---
 
@@ -957,7 +1051,7 @@ text(u[1] + diff(u[1:2])*0.25, mean(u[3:4]), adj=c(0, 0.5), cex=1.5,
 
 ---
 
-# Allele frequencies
+# Allele frequencies, by marker
 
 ```{r allele_freq_bymar}
 allele_freq_bymar <- function(density=FALSE) {
@@ -990,7 +1084,7 @@ allele_freq_bymar(FALSE)
 ---
 
 
-# Allele frequencies
+# Allele frequencies, by marker
 
 ```{r allele_freq_bymar_wdensity}
 allele_freq_bymar(TRUE)
@@ -998,6 +1092,31 @@ allele_freq_bymar(TRUE)
 # mar1 <- "UNC3429406" # founder MAF=4/8 but 20% in DO
 # mar2 <- "UNC3482843" # founder MAF=4/8 but 80% in DO
 ```
+
+---
+
+# Genotype frequencies, by marker
+
+
+```{r geno_freq_bymar}
+file <- "R/_cache/genofreq.RData"
+load(file)
+
+mycolors <- paste0(brocolors("web")[c("purple", "green", "blue", "black")], "33")
+
+layout(rbind(c(5,1,1,2,2,6),c(7,3,3,4,4,8)))
+par(cex=1.5)
+for(i in 1:4) {
+    par(mar=rep(0,4), bty="n")
+    triplot(c("AA", "AB", "BB"))
+    tripoints(marfreq[n1==i,], cex=0.5, pch=16, col=mycolors[i])
+    u <- par("usr")
+    text(u[1:2] %*% c(0.4, 0.6), u[3:4] %*% c(0.25, 0.75),
+         paste0("founder MAF = ", i, "/8"), adj=c(0, 0.5),
+         col="slateblue", font=2, cex=0.9)
+}
+```
+
 
 ---
 
