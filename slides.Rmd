@@ -673,7 +673,7 @@ for(i in 1:5) {
 
 ---
 
-# Genotype frequencies, by individual
+# Allele frequencies, by individual
 
 ```{r genotype_freq}
 # pull out genotype data
@@ -705,7 +705,7 @@ af_gmar <- colMeans((g-1)/2, na.rm=TRUE)
 
 prop_missing <- n_missing(do, "ind", "prop")*100
 
-plot_geno_freq_byind <- function(subset=FALSE, density=FALSE)
+plot_allele_freq_byind <- function(subset=FALSE, density=FALSE)
 {
     these_af <- af_gind
     if(subset) {
@@ -726,31 +726,32 @@ plot_geno_freq_byind <- function(subset=FALSE, density=FALSE)
         }
 
         hist(1-these_af[,i], breaks=breaks, ylim=yli,
-             main=paste0("MAF = ", i, "/8"),
+             main=paste0("founder MAF = ", i, "/8"),
              yaxt="n", ylab="", xlab="Frequency of minor allele", prob=TRUE)
         arrows(i/8, par("usr")[3], i/8, 0, len=0.1, lwd=3, col="violetred")
 
         if(density) lines(u, dn, lwd=2, col="slateblue")
     }
 }
-plot_geno_freq_byind(FALSE)
+plot_allele_freq_byind(FALSE)
 ```
 
 ---
 
-# Genotype frequencies, by individual
+# Allele frequencies, by individual
 
-```{r genotype_freq_subset}
-plot_geno_freq_byind(TRUE)
+```{r allele_freq_subset}
+plot_allele_freq_byind(TRUE)
 ```
 
 ---
 
-# Genotype frequencies, by individual
+# Allele frequencies, by individual
 
-```{r genotype_freq_subset_wdensity}
-plot_geno_freq_byind(TRUE, TRUE)
+```{r allele_freq_subset_wdensity}
+plot_allele_freq_byind(TRUE, TRUE)
 ```
+
 
 ---
 
@@ -956,10 +957,10 @@ text(u[1] + diff(u[1:2])*0.25, mean(u[3:4]), adj=c(0, 0.5), cex=1.5,
 
 ---
 
-# Genotype frequencies
+# Allele frequencies
 
-```{r geno_freq_bymar}
-geno_freq_bymar <- function(density=FALSE) {
+```{r allele_freq_bymar}
+allele_freq_bymar <- function(density=FALSE) {
     par(mfrow=c(2,2), mar=c(5.1, 1.1, 1.1, 1.1), cex=1.5)
     for(i in 1:4) {
         this_af_gmar <- 1 - af_gmar[af_fg==i]
@@ -976,23 +977,23 @@ geno_freq_bymar <- function(density=FALSE) {
         }
 
         hist(this_af_gmar, breaks=breaks, ylim=yli,
-             main=paste0("MAF = ", i, "/8"),
+             main=paste0("founder MAF = ", i, "/8"),
              yaxt="n", ylab="", xlab="Frequency of minor allele", prob=TRUE)
         arrows(i/8, par("usr")[3], i/8, 0, len=0.1, lwd=3, col="violetred")
 
         if(density) lines(u, dn, lwd=2, col="slateblue")
     }
 }
-geno_freq_bymar(FALSE)
+allele_freq_bymar(FALSE)
 ```
 
 ---
 
 
-# Genotype frequencies
+# Allele frequencies
 
-```{r geno_freq_bymar_wdensity}
-geno_freq_bymar(TRUE)
+```{r allele_freq_bymar_wdensity}
+allele_freq_bymar(TRUE)
 # odd markers:
 # mar1 <- "UNC3429406" # founder MAF=4/8 but 20% in DO
 # mar2 <- "UNC3482843" # founder MAF=4/8 but 80% in DO
