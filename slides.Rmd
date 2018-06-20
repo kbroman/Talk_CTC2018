@@ -846,7 +846,6 @@ geno_freq_byind(TRUE)
 ```
 
 
-
 ---
 
 # Genotype probabilities (one mouse on one chr)
@@ -1098,7 +1097,7 @@ allele_freq_bymar(TRUE)
 # Genotype frequencies, by marker
 
 
-```{r geno_freq_bymar}
+```{r geno_freq_bymar, dev="png", doi=600}
 file <- "R/_cache/genofreq.RData"
 load(file)
 
@@ -1122,7 +1121,7 @@ for(i in 1:4) {
 
 # Genotyping error rates
 
-```{r genotype_errors_bymar, dev="svg", doi=600}
+```{r genotype_errors_bymar, dev="png", doi=600}
 percent_err_bymar <- nerr_bymar/n_typed(do, "mar")*100
 par(mar=c(5.1, 1.1, 1.1, 1.1), cex=1.5)
 hist(percent_err_bymar, breaks=200,
