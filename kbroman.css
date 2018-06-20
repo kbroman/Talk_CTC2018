@@ -88,3 +88,6 @@ li li {
 .indent p { /* indent text on the last slide */
     margin-left: 160px;
 }
+.compressed_bullets ul li p { /* reduce space between bullets */
+    margin-bottom: -18px;
+}

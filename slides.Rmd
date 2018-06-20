@@ -10,14 +10,14 @@ output:
             highlightLines: true
             countIncrementalSlides: false
             slideNumberFormat: '%current%'
-            ratio: "16:9"
+            ratio: "4:3"
         css: [default, 'kbroman.css']
         chakra: libs/remark-latest.min.js
 ---
 
 ```{r setup, include=FALSE}
-ratio <- "16:9"
-fig_height <- ifelse(ratio=='4:3', 9, 7.5)
+ratio <- "4:3"
+fig_height <- ifelse(ratio=='4:3', 10, 7.5)
 fig_width <- 15
 curves_height <- ifelse(ratio=='4:3', 580, 540)
 curves_width <- ifelse(ratio=='4:3', 800, 1080)
@@ -275,7 +275,7 @@ het_vs_xint <- function(labels=FALSE) {
 par(mar=c(6.1,5.1,1.6,1.1), cex=1.7, cex.axis=1.3, cex.lab=1.3)
 grayplot(xm, prop_het, bg=purple_green[do$is_female + 1],
          ylab="proportion het on X",
-         xlab="average X chr intensity",
+         xlab="ave X chr intensity",
          ylim=c(0,0.85), yaxs="i")
 on_top <- (do$is_female & xm < 0.4)
 points(xm[on_top], prop_het[on_top], pch=21, bg=purple_green[2])
@@ -396,7 +396,7 @@ image(1:ncol(d), 1:nrow(d), t(d),
 
 ---
 
-# RNA-seq sample mix-ups: minimum vs self distance
+# RNA-seq sample mix-ups: min vs self distance
 
 ```{r gve_best_vs_self_unlabeled}
 gve_best_vs_self <-
@@ -428,7 +428,7 @@ gve_best_vs_self(FALSE)
 
 ---
 
-# RNA-seq sample mix-ups: minimum vs self distance
+# RNA-seq sample mix-ups: min vs self distance
 
 ```{r gve_best_vs_self_labeled}
 gve_best_vs_self(TRUE)
@@ -460,8 +460,10 @@ for(ind in paste0("DO", c(268, 269, 309, 310, 360, 370))) {
 
 
 ```{r microbiome_illustration}
+if(ratio == "4:3") yl <- c(-18, fig_height*10-18) else yl <- c(0, fig_height*10)
+
 par(mar=rep(0, 4), bty="n")
-plot(0, 0, type="n", xlim=c(0,fig_width*10), ylim=c(0, fig_height*10), xaxs="i", yaxs="i",
+plot(0, 0, type="n", xlim=c(0,fig_width*10), ylim=yl, xaxs="i", yaxs="i",
      xaxt="n", yaxt="n", xlab="", ylab="", pty="s")
 mouse_image <- jpeg::readJPEG("Data/mouse_emoji.jpg")
 poop_image <- jpeg::readJPEG("Data/poop_emoji.jpg")
@@ -576,7 +578,7 @@ kable_styling(kable(add_commas(tab), align="rrr"),
 
 ---
 
-# Microbiome mix-ups: minimum vs self distance
+# Microbiome mix-ups: min vs self distance
 
 ```{r microbiome_best_vs_self}
 microbiome_best_vs_self <- function(label=FALSE)
@@ -617,7 +619,7 @@ microbiome_best_vs_self(FALSE)
 
 ---
 
-# Microbiome mix-ups: minimum vs self distance
+# Microbiome mix-ups: min vs self distance
 
 ```{r microbiome_best_vs_self_labeled}
 microbiome_best_vs_self(TRUE)
@@ -806,7 +808,11 @@ function(label=FALSE)
 
     mycolors <- paste0(brocolors("web")[c("purple", "green", "blue", "black")], "33")
 
-    layout(rbind(c(5,1,1,2,2,6),c(7,3,3,4,4,8)))
+    if(ratio == "4:3") {
+        layout(rbind(c(5,1,1,1,6,2,2,2,7),c(8,3,3,3,9,4,4,4,10)))
+    } else {
+        layout(rbind(c(5,1,1,2,2,6),c(7,3,3,4,4,8)))
+    }
     par(cex=1.5)
     for(i in 1:4) {
         par(mar=rep(0,4), bty="n")
@@ -1124,7 +1130,11 @@ load(file)
 
 mycolors <- paste0(brocolors("web")[c("purple", "green", "blue", "black")], "33")
 
-layout(rbind(c(5,1,1,2,2,6),c(7,3,3,4,4,8)))
+if(ratio == "4:3") {
+    layout(rbind(c(5,1,1,1,6,2,2,2,7),c(8,3,3,3,9,4,4,4,10)))
+} else {
+    layout(rbind(c(5,1,1,2,2,6),c(7,3,3,4,4,8)))
+}
 par(cex=1.5)
 for(i in 1:4) {
     par(mar=rep(0,4), bty="n")
@@ -1434,6 +1444,7 @@ plot_snpint(founder_missing[2], founder_missing_snpinf[[2]][[2]], "i",
 
 
 ---
+class: compressed_bullets
 
 
 # Summary
@@ -1448,7 +1459,7 @@ plot_snpint(founder_missing[2], founder_missing_snpinf[[2]][[2]], "i",
 
 - Look for sample duplicates, and if possible sample mix-ups
 
-- Samples: missing data, array intensities, crossovers, errors
+- Samples: missing data, array intensities, crossovers, number of errors
 
 - Markers: lots of reasons for the bad ones
 
