@@ -1459,7 +1459,7 @@ class: compressed_bullets
 
 - Look for sample duplicates, and if possible sample mix-ups
 
-- Samples: missing data, array intensities, crossovers, number of errors
+- Samples: missing data, array intensities, crossovers, errors
 
 - Markers: lots of reasons for the bad ones
 
