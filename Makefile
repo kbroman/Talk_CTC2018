@@ -18,7 +18,6 @@ ctc2018.zip: docs/index.html docs/broman_ctc2018.pdf
 
 docs/broman_ctc2018.pdf: docs/index.html
 	R -e "file <- paste0('file://', normalizePath('docs/index.html'));webshot::webshot(file, '$@')"
-	mv broman_ctc2018.pdf docs/
 
 all: ctc2018.zip
 zip: ctc2018.zip
