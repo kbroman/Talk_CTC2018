@@ -446,9 +446,9 @@ for(ind in paste0("DO", c(268, 269, 309, 310, 360, 370))) {
     this_d <- d[ind,]
     this_d <- this_d[order(as.numeric(sub("DO", "", names(this_d))))]
     grayplot(seq_along(this_d), this_d,
-             xlab="", xaxs="i", xlim=c(-4.5, ncol(d)+0.5),
+             xlab="", xaxs="i", xlim=c(-4.5, ncol(d)+5.5),
              ylab="distance", main=ind, ylim=range(d),
-             xat=c(100, 200, 300, 400, 500), vlines=c(100, 200, 300, 400, 500))
+             xat=c(1,100, 200, 300, 400, 500), vlines=c(1,100, 200, 300, 400, 500))
     text(which.min(this_d)-10, min(this_d), names(which.min(this_d)),
          adj=c(1, 0.5), cex=1.2)
 }
